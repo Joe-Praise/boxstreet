@@ -1,4 +1,9 @@
 BRANCH
 - dev
 - test
-- prod
+- main
+
+
+git branch dev
+git swtich dev
+git merge dev
