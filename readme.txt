@@ -5,5 +5,5 @@ BRANCH
 
 
 git branch dev
-git swtich dev
+git switch dev
 git merge dev
