@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const VerificationSchema = new mongoose.Schema({
     date_created: {
-        type: String,
+        type: Date,
         default: Date.now 
       },
       code: {
