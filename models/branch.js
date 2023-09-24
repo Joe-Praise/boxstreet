@@ -9,8 +9,7 @@ const BranchSchema = new mongoose.Schema({
 
   location: {
     type: String,
-    required: true,
-    unique: true,
+    required: true
   },
 
   opening: {
@@ -23,7 +22,7 @@ const BranchSchema = new mongoose.Schema({
     required: true,
   },
 
-  phones: [String],
+  phones: {type:Array},
 });
 
 const Branch = mongoose.model("branches", BranchSchema);

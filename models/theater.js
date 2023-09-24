@@ -9,21 +9,20 @@ const TheaterSchema = new mongoose.Schema({
       name: {
         type: String,
         required: true,
-        unique: true
       },
       seating_capacity: {
-        type: String,
+        type: Number,
         required: true
       },
       unavailable_seat: {
-        type: String,
+        type: Number,
         required: true
       },
       available_seat: {
-        type: String,
+        type: Number,
         required: true
       },
-      theater_availability: {
+      is_available: {
         type: Boolean
       }
 });
