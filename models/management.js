@@ -24,4 +24,4 @@ const ManagementSchema = new mongoose.Schema({
 
 });
 const Management = mongoose.model("managements", ManagementSchema);
-module.exports = Management 
+module.exports = Management
