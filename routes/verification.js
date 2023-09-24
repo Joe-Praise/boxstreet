@@ -12,73 +12,72 @@ let Verification = require('../models/verification')
     }catch(e){}
   });
 
+   // Get a verification by ID
+   app.get('/verifications/:id', async (req, res) => {
+    try {
+      const verificationId = req.params.id;
+      const verification = await Verification.findById(verificationId);
+      if (!verification) {
+        res.status(404).json({ msg: 'Verification not found', code:404 });
+      } else {
+        res.status(200).json(verification);
+      }
+    } catch (err) {
+      res.status(500).json({ err: err.message });
+    }
+  });
+
 // Create a new verification
-app.post('/verification', async (req, res) => {
+app.post('/verifications', async (req, res) => {
   try {
     let {cinema_id} = req.body;
 
     let cinema = await Cinema.findById(cinema_id)
 
-    if(!cinema) return res.status(404).send({msg:"Cinema does not exist"})
+    if(!cinema) return res.status(404).send({msg:"Cinema does not exist", code:404})
    
     let verification = new Verification(req.body);
   await verification.save();
   res.send(verification);
 
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  });
-  
-  
-  // Get a verification by ID
-  app.get('/verification/:id', async (req, res) => {
-    try {
-      const verificationId = req.params.id;
-      const verification = await Verification.findById(verificationId);
-      if (!verification) {
-        res.status(404).json({ message: 'Verification not found' });
-      } else {
-        res.status(200).json(verification);
-      }
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(400).json({ err: err.message });
     }
   });
   
   // Update a verification by ID
-  app.put('/verification/:id', async (req, res) => {
+  app.put('/verifications/:id', async (req, res) => {
     try {
       const {id} = req.params;
       const verification = await Verification.findById(id);
   
-      if(!verification) return res.status(404).json({msg:"The id supplied does not exist"})
+      if(!verification) return res.status(404).json({msg:"The id supplied does not exist", code:404})
      
       let data = verification._doc;
-      verification.overwrite({...data,...req.body})
+      verification.overwrite({ ...data, ...req.body})
       verification.save()
   
     res.send({msg:"verification updated",data:verification})
   
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ err: err.message });
     }
   });
   
   // Delete a verification by ID
-  app.delete('/verification/:id', async (req, res) => {
+  app.delete('/verifications/:id', async (req, res) => {
     try {
       const {id} = req.params;
       const verification = await Verification.findById(id);
   
       if (!verification) {
-        res.status(404).json({ message: "verification not found" });
+        res.status(404).json({ message: "verification not found",code:404 });
       } else {
-          await verification.remove();
-          res.status(200).send("verification deleted successfully");
+          await verification.deleteOne();
+          res.status(200).send({msg:"verification deleted successfully", code:200});
       }
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ err: err.message });
     }
   });
 

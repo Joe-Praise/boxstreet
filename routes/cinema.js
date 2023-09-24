@@ -18,12 +18,12 @@ app.get("/cinemas/:id", async (req, res) => {
     const cinemaId = req.params.id;
     const cinema = await Cinema.findById(cinemaId);
     if (!cinema) {
-      res.status(404).json({ message: "Cinema not found" });
+      res.status(404).json({ msg: "Cinema not found", code:404 });
     } else {
       res.status(200).json(cinema);
     }
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
   }
 });
 
@@ -70,8 +70,8 @@ app.delete("/cinemas/:id", async (req, res) => {
       await cinema.deleteOne();
       res.status(200).send({msg:"Cinema deleted successfully",code:200});
     }
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
   }
 });
 
