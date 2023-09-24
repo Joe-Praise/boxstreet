@@ -1,28 +1,35 @@
-let Event = require('../models/event')
+const express = require('express');
+let app = express.Router();
+let Event = require('../models/event');
+const Branch = require('../models/branch');
 
 
+  // Get all events
+  app.get('/events', async (req, res) => {
+    try{
+      let events = await events.find().populate("branch_id")
+      res.json(events)
+    }catch(e){}
+  });
 
 // Create a new event
 app.post('/event', async (req, res) => {
     try {
-      const eventData = req.body;
-      const event = new Event(eventData);
-      const savedEvent = await event.save();
-      res.status(201).json(savedEvent);
+      let {branch_id} = req.body;
+
+      let branch = await Branch.findById(branch_id)
+  
+      if(!branch) return res.status(404).send({msg:"Branch does not exist"})
+     
+      let event = new Event(req.body);
+		await event.save();
+		res.send(event);
+
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
   });
   
-  // Get all events
-  app.get('/events', async (req, res) => {
-    try {
-      const events = await Event.find();
-      res.status(200).json(events);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  });
   
   // Get an event by ID
   app.get('/event/:id', async (req, res) => {
@@ -42,14 +49,17 @@ app.post('/event', async (req, res) => {
   // Update an event by ID
   app.put('/event/:id', async (req, res) => {
     try {
-      const eventId = req.params.id;
-      const updatedData = req.body;
-      const updatedEvent = await Event.findByIdAndUpdate(eventId, updatedData, { new: true });
-      if (!updatedEvent) {
-        res.status(404).json({ message: 'Event not found' });
-      } else {
-        res.status(200).json(updatedEvent);
-      }
+      const {id} = req.params;
+      const event = await Event.findById(id);
+  
+      if(!event) return res.status(404).json({msg:"The id supplied does not exist"})
+     
+      let data = event._doc;
+      event.overwrite({...data,...req.body})
+      event.save()
+  
+    res.send({msg:"event updated",data:event})
+    
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
@@ -58,12 +68,14 @@ app.post('/event', async (req, res) => {
   // Delete an event by ID
   app.delete('/event/:id', async (req, res) => {
     try {
-      const eventId = req.params.id;
-      const deletedEvent = await Event.findByIdAndRemove(eventId);
-      if (!deletedEvent) {
-        res.status(404).json({ message: 'Event not found' });
+      const {id} = req.params;
+      const event = await Event.findById(id);
+  
+      if (!event) {
+        res.status(404).json({ message: "Event not found" });
       } else {
-        res.status(204).send();
+          await event.remove();
+          res.status(200).send("Event deleted successfully");
       }
     } catch (error) {
       res.status(500).json({ error: error.message });

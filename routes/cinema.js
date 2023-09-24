@@ -1,5 +1,17 @@
-let Cinema = require('../models/cinema')
+const express = require('express');
+let app = express.Router();
+const Cinema = require('../models/cinema')
 
+
+  // Get all cinemas
+  app.get('/cinemas', async (req, res) => {
+	try {
+	  const cinemas = await Cinema.find();
+	  res.status(200).json(cinemas);
+	} catch (error) {
+	  res.status(500).json({ error: error.message });
+	}
+  });
 
 // Create a new cinema
 app.post('/cinema', async (req, res) => {
@@ -13,15 +25,6 @@ app.post('/cinema', async (req, res) => {
 	}
   });
   
-  // Get all cinemas
-  app.get('/cinemas', async (req, res) => {
-	try {
-	  const cinemas = await Cinema.find();
-	  res.status(200).json(cinemas);
-	} catch (error) {
-	  res.status(500).json({ error: error.message });
-	}
-  });
   
   // Get a cinema by ID
   app.get('/cinema/:id', async (req, res) => {
@@ -41,14 +44,17 @@ app.post('/cinema', async (req, res) => {
   // Update a cinema by ID
   app.put('/cinema/:id', async (req, res) => {
 	try {
-	  const cinemaId = req.params.id;
-	  const updatedData = req.body;
-	  const updatedCinema = await Cinema.findByIdAndUpdate(cinemaId, updatedData, { new: true });
-	  if (!updatedCinema) {
-		res.status(404).json({ message: 'Cinema not found' });
-	  } else {
-		res.status(200).json(updatedCinema);
-	  }
+	    const {id} = req.params;
+      const cinema = await cinema.findById(id);
+  
+      if(!cinema) return res.status(404).json({msg:"The id supplied does not exist"})
+     
+      let data = cinema._doc;
+      cinema.overwrite({...data,...req.body})
+      cinema.save()
+  
+    res.send({msg:"Cinema updated",data:cinema})
+
 	} catch (error) {
 	  res.status(500).json({ error: error.message });
 	}
@@ -56,14 +62,16 @@ app.post('/cinema', async (req, res) => {
   
   // Delete a cinema by ID
   app.delete('/cinema/:id', async (req, res) => {
-	try {
-	  const cinemaId = req.params.id;
-	  const deletedCinema = await Cinema.findByIdAndRemove(cinemaId);
-	  if (!deletedCinema) {
-		res.status(404).json({ message: 'Cinema not found' });
-	  } else {
-		res.status(204).send();
-	  }
+ try {
+      const {id} = req.params;
+      const cinema = await Cinema.findById(id);
+  
+      if (!cinema) {
+        res.status(404).json({ message: "Cinema not found" });
+      } else {
+          await cinema.remove();
+          res.status(200).send("Cinema deleted successfully");
+      }
 	} catch (error) {
 	  res.status(500).json({ error: error.message });
 	}

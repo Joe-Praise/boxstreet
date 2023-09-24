@@ -1,80 +1,85 @@
-let Branch = require('../models/branch')
+const express = require('express');
+let app = express.Router();
+const Branch = require('../models/branch');
+const Cinema = require('../models/cinema')
 
+
+// Get all branches
+app.get("/branches", async function(req,res){
+	try{
+		let branches = await Branch.find().populate("cinema_id")
+		res.json(branches)
+	}catch(e){}
+});
 
 // Create a new branch
-app.post("/branch", (req, res) => {
-    const branchData = req.body;
-    const branch = new Branch(branchData);
-  
-    branch.save((err, savedBranch) => {
-      if (err) {
-        res.status(400).json({ error: err.message });
-      } else {
-        res.status(201).json(savedBranch);
-      }
-    });
-  });
-  
-  // Get all branches
-  app.get("/branches", (req, res) => {
-    Branch.find({}, (err, branches) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-      } else {
-        res.status(200).json(branches);
-      }
-    });
-  });
-  
-  // Get a branch by ID
-  app.get("/branch/:id", (req, res) => {
-    const branchId = req.params.id;
-    Branch.findById(branchId, (err, branch) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-      } else {
-        if (!branch) {
-          res.status(404).json({ message: "Branch not found" });
-        } else {
-          res.status(200).json(branch);
-        }
-      }
-    });
-  });
-  
-  // Update a branch by ID
-  app.put("/branch/:id", (req, res) => {
-    const branchId = req.params.id;
-    const updatedData = req.body;
-  
-    Branch.findByIdAndUpdate(branchId, updatedData, { new: true }, (err, updatedBranch) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-      } else {
-        if (!updatedBranch) {
-          res.status(404).json({ message: "Branch not found" });
-        } else {
-          res.status(200).json(updatedBranch);
-        }
-      }
-    });
-  });
-  
-  // Delete a branch by ID
-  app.delete("/branch/:id", (req, res) => {
-    const branchId = req.params.id;
-    Branch.findByIdAndRemove(branchId, (err, deletedBranch) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-      } else {
-        if (!deletedBranch) {
-          res.status(404).json({ message: "Branch not found" });
-        } else {
-          res.status(204).send();
-        }
-      }
-    });
-  });
+app.post("/branch", async (req, res) => {
+  try {
+    let {cinema_id} = req.body;
+
+    let cinema = await Cinema.findById(cinema_id)
+
+    if(!cinema) return res.status(404).send({msg:"Cinema does not exist"})
+
+    let branch = new Branch(req.body);
+		await branch.save();
+		res.send(branch);
+        
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
 
 
-  module.exports = app
+// Get a branch by ID
+app.get("/branch/:id", async (req, res) => {
+  try {
+    const branchId = req.params.id;
+    const branch = await Branch.findById(branchId);
+
+    if (!branch) {
+      res.status(404).json({ message: "Branch not found" });
+    } else {
+      res.status(200).json(branch);
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update a branch by ID
+app.put("/branch/:id", async (req, res) => {
+  try {
+    const {id} = req.params;
+    const branch = await Branch.findById(id);
+
+    if(!branch) return res.status(404).json({msg:"The id supplied does not exist"})
+
+    let data = branch._doc;
+    branch.overwrite({...data,...req.body})
+    branch.save()
+  
+    res.send({msg:"branch updated",data:branch})
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete a branch by ID
+app.delete("/branch/:id", async (req, res) => {
+  try {
+    const {id} = req.params;
+    const branch = await Branch.findById(id);
+
+    if (!branch) {
+      res.status(404).json({ message: "Branch not found" });
+    } else {
+        await branch.remove();
+        res.status(200).send("Branch deleted successfully");
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+module.exports = app;
