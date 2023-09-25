@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express.Router();
 const Branch = require('../models/branch');
-const Cinema = require('../models/cinema')
+const Cinema = require('../models/cinema');
 
 
 // Get all branches
