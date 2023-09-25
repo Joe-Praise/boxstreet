@@ -20,8 +20,8 @@ mongoose.connection.on("error", (err) => console.log(err.message));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/v1/", cinema);
-app.use("/api/v1/user", user);
+app.use("/api/v1/cinemas", cinema);
+app.use("/api/v1/users", user);
 app.get("/", (req, res) => {
   res.json({
     msg: "Api is running",
