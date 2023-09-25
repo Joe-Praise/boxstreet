@@ -45,4 +45,22 @@ app.post('/Websetting', async (req, res) => {
   });
 
 
+   // Delete a websettings by ID
+   app.delete('/:id', async (req, res) => {
+    try {
+      const {id} = req.params;
+      const websettings = await Websettings.findById(id);
+  
+      if (!websettings) {
+        res.status(404).json({ message: "websettings not found",code:404 });
+      } else {
+          await websettings.deleteOne();
+          res.status(200).send({msg:"websettings deleted successfully", code:200});
+      }
+    } catch (err) {
+      res.status(500).json({ err: err.message });
+    }
+  });
+
+
 module.exports = app

@@ -5,7 +5,7 @@ const Cinema = require('../models/cinema')
 
 
 // Get all branches
-app.get("/branches", async function(req,res){
+app.get("/", async function(req,res){
 	try{
 		let branches = await Branch.find().populate("cinema_id")
 		res.json(branches)
@@ -13,7 +13,7 @@ app.get("/branches", async function(req,res){
 });
 
 // Create a new branch
-app.post("/branch", async (req, res) => {
+app.post("/", async (req, res) => {
   try {
     let {cinema_id} = req.body;
 
@@ -32,7 +32,7 @@ app.post("/branch", async (req, res) => {
 
 
 // Get a branch by ID
-app.get("/branch/:id", async (req, res) => {
+app.get("/:id", async (req, res) => {
   try {
     const branchId = req.params.id;
     const branch = await Branch.findById(branchId);
@@ -48,7 +48,7 @@ app.get("/branch/:id", async (req, res) => {
 });
 
 // Update a branch by ID
-app.put("/branch/:id", async (req, res) => {
+app.put("/:id", async (req, res) => {
   try {
     const {id} = req.params;
     const branch = await Branch.findById(id);
@@ -66,7 +66,7 @@ app.put("/branch/:id", async (req, res) => {
 });
 
 // Delete a branch by ID
-app.delete("/branch/:id", async (req, res) => {
+app.delete("/:id", async (req, res) => {
   try {
     const {id} = req.params;
     const branch = await Branch.findById(id);

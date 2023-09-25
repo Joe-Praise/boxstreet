@@ -2,8 +2,8 @@ const express = require("express");
 let app = express.Router();
 const Cinema = require("../models/cinema");
 
-// Get all cinemas
-app.get("/cinemas", async (req, res) => {
+// / Get all cinemas
+app.get("/", async (req, res) => {
   try {
     const cinemas = await Cinema.find();
     res.status(200).json(cinemas);
@@ -12,8 +12,8 @@ app.get("/cinemas", async (req, res) => {
   }
 });
 
-// Get a cinema by ID
-app.get("/cinemas/:id", async (req, res) => {
+// / Get a cinema by ID
+app.get("/:id", async (req, res) => {
   try {
     const cinemaId = req.params.id;
     const cinema = await Cinema.findById(cinemaId);
@@ -27,8 +27,8 @@ app.get("/cinemas/:id", async (req, res) => {
   }
 });
 
-// Create a new cinema
-app.post("/cinemas", async (req, res) => {
+// / Create a new cinema
+app.post("/", async (req, res) => {
   try {
     const cinemaData = req.body;
     const cinema = new Cinema(cinemaData);
@@ -39,8 +39,8 @@ app.post("/cinemas", async (req, res) => {
   }
 });
 
-// Update a cinema by ID
-app.put("/cinemas/:id", async (req, res) => {
+// / Update a cinema by ID
+app.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const cinema = await cinema.findById(id);
@@ -58,8 +58,8 @@ app.put("/cinemas/:id", async (req, res) => {
   }
 });
 
-// Delete a cinema by ID
-app.delete("/cinemas/:id", async (req, res) => {
+// / Delete a cinema by ID
+app.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const cinema = await Cinema.findById(id);

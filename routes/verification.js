@@ -5,7 +5,7 @@ let Verification = require('../models/verification')
 
 
   // Get all verifications
-  app.get('/verifications', async (req, res) => {
+  app.get('/', async (req, res) => {
     try{
       let verifications = await verifications.find().populate("cinema_id")
       res.json(verifications)
@@ -13,7 +13,7 @@ let Verification = require('../models/verification')
   });
 
    // Get a verification by ID
-   app.get('/verifications/:id', async (req, res) => {
+   app.get('/:id', async (req, res) => {
     try {
       const verificationId = req.params.id;
       const verification = await Verification.findById(verificationId);
@@ -28,7 +28,7 @@ let Verification = require('../models/verification')
   });
 
 // Create a new verification
-app.post('/verifications', async (req, res) => {
+app.post('/', async (req, res) => {
   try {
     let {cinema_id} = req.body;
 
@@ -46,7 +46,7 @@ app.post('/verifications', async (req, res) => {
   });
   
   // Update a verification by ID
-  app.put('/verifications/:id', async (req, res) => {
+  app.put('/:id', async (req, res) => {
     try {
       const {id} = req.params;
       const verification = await Verification.findById(id);
@@ -65,7 +65,7 @@ app.post('/verifications', async (req, res) => {
   });
   
   // Delete a verification by ID
-  app.delete('/verifications/:id', async (req, res) => {
+  app.delete('/:id', async (req, res) => {
     try {
       const {id} = req.params;
       const verification = await Verification.findById(id);

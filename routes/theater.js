@@ -5,7 +5,7 @@ let Theater = require('../models/theater')
 
 
   // Get all theaters
-  app.get('/theaters', async (req, res) => {
+  app.get('/', async (req, res) => {
     try {
       let theaters = await theaters.find().populate("branch_id")
       res.json(theaters)
@@ -13,7 +13,7 @@ let Theater = require('../models/theater')
   });
 
    // Get a theater by ID
-   app.get('/theaters/:id', async (req, res) => {
+   app.get('/:id', async (req, res) => {
     try {
       const theaterId = req.params.id;
       const theater = await Theater.findById(theaterId);
@@ -28,7 +28,7 @@ let Theater = require('../models/theater')
   });
 
 // Create a new theater
-app.post('/theaters', async (req, res) => {
+app.post('/', async (req, res) => {
   
       try {
         let {branch_id} = req.body;
@@ -47,7 +47,7 @@ app.post('/theaters', async (req, res) => {
   });
    
   // Update a theater by ID
-  app.put('/theaters/:id', async (req, res) => {
+  app.put('/:id', async (req, res) => {
     try {
       const {id} = req.params;
       const theater = await Theater.findById(id);
@@ -66,7 +66,7 @@ app.post('/theaters', async (req, res) => {
   });
   
   // Delete a theater by ID
-  app.delete('/theater/:id', async (req, res) => {
+  app.delete('/:id', async (req, res) => {
     try {
       const {id} = req.params;
       const theater = await Theater.findById(id);
