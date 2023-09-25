@@ -19,7 +19,13 @@ mongoose.connection.on("error", (err) => console.log(err.message));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
 app.use("/api/v1/", cinema);
+app.get("/",(req,res)=>{
+    res.json({
+        msg:"Api is running"
+    })
+})
 
 app.listen(PORT);
 console.log("App runnning on port:" + PORT);
