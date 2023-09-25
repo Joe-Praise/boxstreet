@@ -49,7 +49,7 @@ app.put("/cinemas/:id", async (req, res) => {
       return res.status(404).json({ msg: "The id supplied does not exist",code:404 });
 
     let data = cinema._doc;
-    cinema.overwrite({ ...data, ...req.body });
+    cinema.overwrite({ ...data, ...req.body }); 
     cinema.save();
 
     res.send({ msg: "Cinema updated", data: cinema });

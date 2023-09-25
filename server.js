@@ -17,8 +17,16 @@ mongoose.connect(MONGO_URL, {
 mongoose.connection.on("open", () => console.log("Mongo Server connected"));
 mongoose.connection.on("error", (err) => console.log(err.message));
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use("/api/v1/", cinema);
 app.use("/api/v1/user", user);
+app.get("/", (req, res) => {
+  res.json({
+    msg: "Api is running",
+  });
+});
 
 app.listen(PORT);
 console.log("App runnning on port:" + PORT);
