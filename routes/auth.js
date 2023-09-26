@@ -75,4 +75,6 @@ app.post("/login", async (req, res) => {
   }
 });
 
+// forgot password, password reset and update password
+
 module.exports = app;

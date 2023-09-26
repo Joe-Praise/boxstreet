@@ -9,7 +9,7 @@ const SeatSchema = new mongoose.Schema({
     ref: "categories",
   },
   seat_number: { type: String, required: true },
-  booked: { type: Boolean, default: true },
+  booked: { type: Boolean, default: false },
   active: { type: Boolean },
 });
 const Seat = mongoose.model("seats", SeatSchema);
