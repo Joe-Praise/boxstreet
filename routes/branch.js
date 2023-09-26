@@ -1,25 +1,27 @@
 const express = require('express');
-let app = express.Router();
+const app = express.Router();
 const Branch = require('../models/branch');
-const Cinema = require('../models/cinema')
+const Cinema = require('../models/cinema');
 
 
 // Get all branches
-app.get("/", async function(req,res){
+app.get("/", async (req, res) =>{
 	try{
-		let branches = await Branch.find().populate("cinema_id")
-		res.json(branches)
-	}catch(e){}
+		const branches = await Branch.find();populate("cinema_id");
+		res.json(branches);
+	} catch (error) {
+    res.status(500).json({error: error.message});
+  }
 });
 
 // Create a new branch
 app.post("/", async (req, res) => {
   try {
-    let {cinema_id} = req.body;
+    const {cinema_id} = req.body;
 
     let cinema = await Cinema.findById(cinema_id)
 
-    if(!cinema) return res.status(404).send({msg:"Cinema does not exist"})
+    if(!cinema) return res.status(404).send({msg:"Cinema does not exist", code:404});
 
     let branch = new Branch(req.body);
 		await branch.save();
@@ -34,16 +36,16 @@ app.post("/", async (req, res) => {
 // Get a branch by ID
 app.get("/:id", async (req, res) => {
   try {
-    const branchId = req.params.id;
-    const branch = await Branch.findById(branchId);
+    const {id} = req.params;
+    const branch = await Branch.findById(id);
 
     if (!branch) {
-      res.status(404).json({ message: "Branch not found" });
+      res.status(404).json({ msg: "Branch not found" });
     } else {
       res.status(200).json(branch);
     }
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ err: err.message });
   }
 });
 
@@ -53,13 +55,14 @@ app.put("/:id", async (req, res) => {
     const {id} = req.params;
     const branch = await Branch.findById(id);
 
-    if(!branch) return res.status(404).json({msg:"The id supplied does not exist"})
+    if(!branch) 
+      return res.status(404).json({msg:"The id supplied does not exist", code:404});
 
     let data = branch._doc;
     branch.overwrite({...data,...req.body})
     branch.save()
   
-    res.send({msg:"branch updated",data:branch})
+    res.send({msg:"branch updated",data: branch});
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -72,13 +75,13 @@ app.delete("/:id", async (req, res) => {
     const branch = await Branch.findById(id);
 
     if (!branch) {
-      res.status(404).json({ message: "Branch not found" });
+      res.status(404).json({ msg: "Branch not found", code:404 });
     } else {
-        await branch.remove();
-        res.status(200).send("Branch deleted successfully");
+        await branch.deleteOne();
+        res.status(200).send({msg: "Branch deleted successfully", code:200});
     }
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ err: err.message });
   }
 });
 

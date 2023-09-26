@@ -55,7 +55,7 @@ app.post('/', async (req, res) => {
       const {id} = req.params;
       const theater = await Theater.findById(id);
   
-      if(!theater) return res.status(404).json({msg:"The id supplied does not exist", code:404 })
+      if(!theater) return res.status(404).json({msg: "The id supplied does not exist", code:404 })
      
       let data = theater._doc;
       theater.overwrite({...data, ...req.body})

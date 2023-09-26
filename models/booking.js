@@ -3,30 +3,30 @@ const mongoose = require("mongoose")
 const BookingSchema = new mongoose.Schema({
     cinema_id: {
         type: String,
-        required: true,
+    
         ref: "cinemas"
     },
 
     schedule_id: {
         type: String,
-        required: true,
+        
         ref: "schedules"
     },
 
     user_id: {
         type: String,
-        required: true,
+        
         ref: "users"
     },
     theater_id: {
         type: String,
-        required: true,
+        
         ref: "theaters"
     },
 
     movie_id: {
         type: String,
-        required: true,
+        
         ref: "movies"
     },
 
@@ -44,52 +44,52 @@ const BookingSchema = new mongoose.Schema({
 
     fullname: {
         type: String,
-        rquired: true,
+        
     },
 
     phone: {
         type: String,
-        rquired: true,
+    
     },
 
     email: {
         type: String,
-        rquired: true,
+        
     },
 
     price: {
         type: Number,
-        rquired: true,
+        
     },
 
     quantity: {
         type: Number,
-        rquired: true,
+        
     },
 
     sub_total: {
         type: Number,
-        rquired: true,
+        
     },
 
     incentive: {
         type: String,
-        rquired: true,
+        
     },
 
     seat_number: {
         type: String,
-        rquired: true,
+        
     },
 
     ticket_type: {
         type: String,
-        rquired: true,
+        
     },
 
     ticket_no: {
         type: String,
-        rquired: true,
+        
     },
 
     is_checked: {
