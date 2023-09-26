@@ -9,13 +9,24 @@ const branch = require("./routes/branch");
 const theater = require("./routes/theater");
 const verification = require("./routes/verification");
 const websettings = require("./routes/websettings");
-const bookedseat = require("./models/booked_seat");
-const seat = require("./models/seat");
-const movieschedule = require("./models/movie_schedule");
+<<<<<<< Updated upstream
+<<<<<<< HEAD
+const bookedseat = require("./routes/bookedseat");
+const seat = require("./routes/seat");
+const movieschedule = require("./routes/movieschedule");
+const auth = require("./routes/auth");
+=======
 const movie = require("./routes/movie")
 const review = require("./routes/review")
 const screen = require("./routes/screen")
+<<<<<<< HEAD
 const booking = require ("./routes/booking")
+=======
+>>>>>>> e4d06f0c24ffe73ab028ad592b1d209c35e0c838
+=======
+
+
+>>>>>>> d8f2c312f682b3a110c6c550b80d9aea667e686b
 let PORT = process.env.PORT;
 let MONGO_URL = process.env.MONGO_URL;
 
@@ -39,10 +50,21 @@ app.use("/api/v1/websettings", websettings);
 app.use("/api/v1/bookedseats", bookedseat);
 app.use("/api/v1/seats", seat);
 app.use("/api/v1/movieschedule", movieschedule);
+<<<<<<< Updated upstream
+<<<<<<< HEAD
+app.use("/api/v1/auth/", auth);
+=======
 app.use("/api/v1/movies", movie)
 app.use("/api/v1/review", review)
 app.use("/api/v1/screen", screen)
+<<<<<<< HEAD
 app .use("/api/v1/bookings", booking)
+=======
+>>>>>>> e4d06f0c24ffe73ab028ad592b1d209c35e0c838
+=======
+>>>>>>> Stashed changes
+
+>>>>>>> d8f2c312f682b3a110c6c550b80d9aea667e686b
 app.get("/", (req, res) => {
   res.json({
     msg: "Api is running",
@@ -50,4 +72,4 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT);
-console.log("App runnning on port:" + PORT);
+console.log("App runnning on port:" + PORT);

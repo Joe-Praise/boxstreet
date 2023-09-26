@@ -8,7 +8,7 @@ const MovieSchema = new mongoose.Schema({
   trailer: { type: String, required: true },
   description: { type: String, required: true }, //synopsis for the movie
   times_showed: { type: Number },
-  cast: { tytpe: String, required: true },
+  cast: { type: String, required: true },
   movie_director: { type: String, required: true },
   production_studio: { type: String, required: true },
   genre: { type: String, required: true },
@@ -18,7 +18,7 @@ const MovieSchema = new mongoose.Schema({
   pg_rating: { type: String, required: true },
   release_date: { type: String, required: true },
   upload_date: { type: String, default: Date.now },
-  active: { type: Boolean },
+  active: { type: Boolean }
 });
 
 const Movie = mongoose.model("movies", MovieSchema);
