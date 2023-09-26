@@ -6,39 +6,39 @@ let express = require('express');
 let app = express.Router()
 
 //get all screens
-app.get('/screens', async function (req, res){
+app.get('/', async function (req, res){
     try{
         let screens = await Screen.find().populate("cinema_id", "branch_id", "theater_id");
-        res.json(screens)
-    } catch (err) {
-        res.status(500).send(err.message)
+        res.status(200).json(screens)
+    } catch (error) {
+        res.status(500).json({ error: error.message})
     }
 })
 
 //get a screen by id
-app.get('/screen/:id', async function (req, res){
+app.get('/:id', async function (req, res){
     try{
-        let screenId = req.params.id;
-        let screen = await Screen.findById(screenId);
+        const screenId = req.params.id;
+        const screen = await Screen.findById(screenId);
         
         if(!screen) {
-            res.status(500).json({message: "Screen not Found"})
+            res.status(404).json({msg: "Screen not Found", code: 404})
         } else {
-            res.status(500).json(screen)
+            res.status(200).json(screen)
         }
     } catch(err){
-        res.status(500).send(err.message)
+        res.status(500).send({ err: err.message})
     }
 })
 
 //create a new screen
-app.post('/screens', async function (req, res){
+app.post('/', async function (req, res){
     try{
-        let {cinema_id, branch_id, theater_id} = req.body;
+        const {cinema_id, branch_id, theater_id} = req.body;
 
-        let cinema = await Cinema.findById(cinema_id);
-        let branch = await Branch.findById(branch_id);
-        let theater = await Theater.findById(theater_id);
+        const cinema = await Cinema.findById(cinema_id);
+        const branch = await Branch.findById(branch_id);
+        const theater = await Theater.findById(theater_id);
 
         if(!cinema) return res.status(500).send({message: "Cinema does not exist"})
         if(!branch) return res.status(500).send({message: "Branch does not exist"})
@@ -48,26 +48,41 @@ app.post('/screens', async function (req, res){
         await screen.save();
         res.send(screen);
     } catch (err){
-        res.status(500).send(err.message)
+        res.status(400).send({err: err.message})
     }
 })
 
 //update a movie by id
-app.put('/screens', async function (req, res){
+app.put('/:id', async function (req, res){
     try{
+        const {id} = req.params;
+        const screen = await Screen.findById(id);
 
+        if(!screen) return res.status(404).json({ msg: "This Screen id does not exist", code:404})
+
+        let data = screen._doc;
+        screen.overwrite({ ...data, ...req.body });
+        screen.save();
+        res.send({msg: "Th screen has been updated", data: screen })
     }catch (err){
-        res.status(500).send(err.message)
+        res.status(500).json({err: err.message})
     }
 })
 
 //delete a movie
-app.delete('/screens', async function (req, res){
+app.delete('/:id', async function (req, res){
     try{
-        let {id} = req.params;
-        let screen = await Movie.findById(id)
+        const {id} = req.params;
+        const screen = await Movie.findById(id)
+
+        if (!screen) {
+            res.status(404).json({ msg: "Screen not found",code:404 });
+          } else {
+            await screen.deleteOne();
+            res.status(200).send({msg:"Screen deleted successfully",code:200});
+          }
     } catch (err){
-        res.status(500).send(err.message)
+        res.status(500).send({err: err.message})
     }
 })
 
