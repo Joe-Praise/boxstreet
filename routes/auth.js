@@ -45,7 +45,7 @@ app.post("/signup", async (req, res) => {
     const user = new User(userData);
     const savedUser = await user.save();
     createSendToken(savedUser, 201, res);
-  } catch (error) {
+  } catch (err) {
     res.status(400).json({ err: err.message });
   }
 });
