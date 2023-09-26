@@ -12,6 +12,9 @@ const websettings = require("./routes/websettings");
 const bookedseat = require("./models/booked_seat");
 const seat = require("./models/seat");
 const movieschedule = require("./models/movie_schedule");
+const movie = require("./routes/movie")
+const review = require("./routes/review")
+const screen = require("./routes/screen")
 
 let PORT = process.env.PORT;
 let MONGO_URL = process.env.MONGO_URL;
@@ -36,6 +39,9 @@ app.use("/api/v1/websettings", websettings);
 app.use("/api/v1/bookedseats", bookedseat);
 app.use("/api/v1/seats", seat);
 app.use("/api/v1/movieschedule", movieschedule);
+app.use("/api/v1/movies", movie)
+app.use("/api/v1/review", review)
+app.use("/api/v1/screen", screen)
 
 app.get("/", (req, res) => {
   res.json({
