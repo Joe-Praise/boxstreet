@@ -9,6 +9,9 @@ const branch = require("./routes/branch");
 const theater = require("./routes/theater");
 const verification = require("./routes/verification");
 const websettings = require("./routes/websettings");
+const bookedseat = require("./models/booked_seat");
+const seat = require("./models/seat");
+const movieschedule = require("./models/movie_schedule");
 
 let PORT = process.env.PORT;
 let MONGO_URL = process.env.MONGO_URL;
@@ -30,7 +33,9 @@ app.use("/api/v1/branches", branch);
 app.use("/api/v1/theaters", theater);
 app.use("/api/v1/verifications", verification);
 app.use("/api/v1/websettings", websettings);
-
+app.use("/api/v1/bookedseats", bookedseat);
+app.use("/api/v1/seats", seat);
+app.use("/api/v1/movieschedule", movieschedule);
 
 app.get("/", (req, res) => {
   res.json({
