@@ -29,15 +29,15 @@ app.post('/Websetting', async (req, res) => {
   app.put('/Websetting', async (req, res) => {
     try {
       const {id} = req.params;
-      const Websetting = await Websetting.findById(id);
+      const websetting = await Websetting.findById(id);
   
-      if(!Websetting) return res.status(404).json({msg:"The id supplied does not exist", code:404})
+      if(!websetting) return res.status(404).json({msg:"The id supplied does not exist", code:404})
      
-      let data = Websetting._doc;
-      Websetting.overwrite({...data,...req.body})
-      Websetting.save()
+      let data = websetting._doc;
+      websetting.overwrite({...data,...req.body})
+      websetting.save()
   
-    res.send({msg:"Websetting updated",data:Websetting})
+    res.send({msg:"Websetting updated",data:websetting})
 
     } catch (err) {
       res.status(500).json({ err: err.message });

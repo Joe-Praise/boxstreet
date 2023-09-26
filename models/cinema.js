@@ -19,10 +19,8 @@ const CinemaSchema = new mongoose.Schema({
   image: { 
     type: String 
 }, 
-  date_created: { 
-  type: Date, 
-  default: Date.now }
-})
+
+},{timestamps:true})
 
 
 const Cinema = mongoose.model("cinemas", CinemaSchema);

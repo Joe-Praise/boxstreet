@@ -7,7 +7,7 @@ let Theater = require('../models/theater')
   // Get all theaters
   app.get('/', async (req, res) => {
     try {
-      let theaters = await theaters.find().populate("branch_id")
+      let theaters = await theaters.find().populate("branch_id theater_id")
       res.json(theaters)
     }catch(e){}
   });

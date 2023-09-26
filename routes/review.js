@@ -22,7 +22,7 @@ app.get('/review/:id', async function (req, res){
         let review = await Screen.findById(reviewId);
         
         if(!review) {
-            res.status(500).json({message: "Review not Found"})
+            res.status(404).json({msg: "Review not Found",code:404})
         } else {
             res.status(500).json(review)
         }
@@ -40,9 +40,9 @@ app.post('/reviews', async function (req, res){
         let movie = await Movie.findById(movie_id);
         let user = await User.findById(user_id);
 
-        if(!cinema) return res.status(500).send({message: "Cinema does not exist"})
-        if(!movie) return res.status(500).send({message: "Movie does not exist"})
-        if(!user) return res.status(500).send({message: "User does not exist"})
+        if(!cinema) return res.status(500).send({msg: "Cinema does not exist"})
+        if(!movie) return res.status(500).send({msg: "Movie does not exist"})
+        if(!user) return res.status(500).send({msg: "User does not exist"})
 
         let review = new Review(req.body);
         await review.save();

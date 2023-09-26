@@ -43,7 +43,7 @@ app.post("/", async (req, res) => {
 app.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const cinema = await cinema.findById(id);
+    const cinema = await Cinema.findById(id);
 
     if (!cinema)
       return res
@@ -59,6 +59,25 @@ app.put("/:id", async (req, res) => {
     res.status(500).json({ err: err.message });
   }
 });
+
+// / Upload image for cinema
+app.put("/:id/resources", async (req, res) => {
+	try {
+	  const { id } = req.params;
+	  const cinema = await cinema.findById(id);
+  
+	  if (!cinema)
+		return res.status(404).json({ msg: "The id supplied does not exist",code:404 });
+  
+	//   let data = cinema._doc;
+	//   cinema.overwrite({ ...data, ...req.body }); 
+	//   cinema.save();
+  
+	  res.send({ msg: "Cinema updated", data: cinema });
+	} catch (err) {
+	  res.status(500).json({ err: err.message });
+	}
+  });
 
 // / Delete a cinema by ID
 app.delete("/:id", async (req, res) => {

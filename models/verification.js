@@ -1,10 +1,6 @@
 const mongoose = require("mongoose");
 
 const VerificationSchema = new mongoose.Schema({
-    date_created: {
-        type: Date,
-        default: Date.now 
-      },
       code: {
         type: String,
         required: true
@@ -17,6 +13,6 @@ const VerificationSchema = new mongoose.Schema({
         required: true,
         ref: "cinemas"
       }
-});
+},{timestamps:true});
 const Verification = mongoose.model("verifications", VerificationSchema);
 module.exports = Verification;

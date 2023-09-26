@@ -1,4 +1,4 @@
-let mongoose = require("mongoose");
+const mongoose = require("mongoose");
 let express = require("express");
 let app = express();
 require("dotenv").config();
@@ -44,4 +44,4 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT);
-console.log("App runnning on port:" + PORT);
+console.log("App runnning on port:" + PORT);
