@@ -18,16 +18,13 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide a password"],
     minLength: [8, "password must be more or equal to 8 characters"],
-    select: false,
+    // select: false,
   },
   active: { type: Boolean, default: true, select: false },
   cinema_id: { type: String, required: true },
   photo: { type: String },
   created_at: { type: Date, default: Date.now },
 });
-
-const User = mongoose.model("users", UserSchema);
-module.exports = User;
 
 UserSchema.pre("save", async function (next) {
   // Only run this password if the password was actually modified
@@ -50,3 +47,6 @@ UserSchema.methods.correctPassword = async function (
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
+
+const User = mongoose.model("users", UserSchema);
+module.exports = User;

@@ -1,6 +1,7 @@
 const express = require("express");
 const User = require("../models/user");
 let app = express.Router();
+const jwt = require("jsonwebtoken");
 
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -22,6 +23,7 @@ const createSendToken = (user, statusCode, res) => {
 
   // Remove password from the output
   user.password = undefined;
+  user.active = undefined;
 
   res.status(statusCode).json({
     status: "success",
@@ -63,12 +65,13 @@ app.post("/login", async (req, res) => {
     const user = await User.findOne({ email }).select("+password");
 
     if (!user || !(await user.correctPassword(password, user.password))) {
+      console.log(user);
       return res.status(401).json({ msg: "Incorrect email or password" });
     }
 
     createSendToken(user, 200, res);
-  } catch (error) {
-    res.status(400).json({});
+  } catch (err) {
+    res.status(400).json({ msg: err.message });
   }
 });
 

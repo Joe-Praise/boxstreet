@@ -1,5 +1,6 @@
 const express = require("express");
 const User = require("../models/user");
+const { Protect } = require("../middleware/auth");
 let app = express.Router();
 
 // Get all users
@@ -31,7 +32,7 @@ app.get("/:id", async (req, res) => {
 });
 
 // Update a user by ID
-app.put("/:id", async (req, res) => {
+app.patch("/:id", Protect, async (req, res) => {
   try {
     const { id } = req.params;
     const user = await User.findById(id);
