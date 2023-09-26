@@ -17,5 +17,6 @@ const CategorySchema = new mongoose.Schema({
     ref: "cinemas",
   },
 });
+
 const Category = mongoose.model("categories", CategorySchema);
 module.exports = Category;

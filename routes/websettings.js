@@ -24,24 +24,41 @@ app.post('/Websetting', async (req, res) => {
       res.status(400).json({ error: error.message });
     }
   });
-  
-  
+    
   // Update the websettings
   app.put('/Websetting', async (req, res) => {
     try {
       const {id} = req.params;
-      const Websetting = await Websetting.findById(id);
+      const websetting = await Websetting.findById(id);
   
-      if(!Websetting) return res.status(404).json({msg:"The id supplied does not exist"})
+      if(!websetting) return res.status(404).json({msg:"The id supplied does not exist", code:404})
      
-      let data = Websetting._doc;
-      Websetting.overwrite({...data,...req.body})
-      Websetting.save()
+      let data = websetting._doc;
+      websetting.overwrite({...data,...req.body})
+      websetting.save()
   
-    res.send({msg:"Websetting updated",data:Websetting})
+    res.send({msg:"Websetting updated",data:websetting})
 
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ err: err.message });
+    }
+  });
+
+
+   // Delete a websettings by ID
+   app.delete('/:id', async (req, res) => {
+    try {
+      const {id} = req.params;
+      const websettings = await Websettings.findById(id);
+  
+      if (!websettings) {
+        res.status(404).json({ message: "websettings not found",code:404 });
+      } else {
+          await websettings.deleteOne();
+          res.status(200).send({msg:"websettings deleted successfully", code:200});
+      }
+    } catch (err) {
+      res.status(500).json({ err: err.message });
     }
   });
 
