@@ -18,7 +18,7 @@ const MovieSchema = new mongoose.Schema({
   pg_rating: { type: String, required: true },
   release_date: { type: String, required: true },
   upload_date: { type: String, default: Date.now },
-  active: { type: Boolean },
+  active: { type: Boolean }
 });
 
 const Movie = mongoose.model("movies", MovieSchema);
