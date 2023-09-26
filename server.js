@@ -15,7 +15,7 @@ const movieschedule = require("./models/movie_schedule");
 const movie = require("./routes/movie")
 const review = require("./routes/review")
 const screen = require("./routes/screen")
-
+const booking = require ("./routes/booking")
 let PORT = process.env.PORT;
 let MONGO_URL = process.env.MONGO_URL;
 
@@ -42,7 +42,7 @@ app.use("/api/v1/movieschedule", movieschedule);
 app.use("/api/v1/movies", movie)
 app.use("/api/v1/review", review)
 app.use("/api/v1/screen", screen)
-
+app .use("/api/v1/bookings", booking)
 app.get("/", (req, res) => {
   res.json({
     msg: "Api is running",
