@@ -9,7 +9,9 @@ let Category = require('../models/category')
     try{
       let categories = await Category.find().populate("cinema_id")
       res.json(categories)
-    }catch(e){}
+    }catch(err){
+      res.status(500).json({error: err.message});
+    }
   });
 
     // Get a category by ID
