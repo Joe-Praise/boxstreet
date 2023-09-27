@@ -5,7 +5,7 @@ let app = express.Router();
 //get all movies
 app.get("/", async (req, res) => {
   try {
-    const movie = await Movie.find().populate("cinema_id branch_id");
+    const movie = await Movie.find();
     res.status(200).json({
         status: "success",
         data: movie,
