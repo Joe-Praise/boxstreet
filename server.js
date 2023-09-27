@@ -43,7 +43,7 @@ app.use("/api/v1/seats", seat);
 app.use("/api/v1/movieschedule", movieschedule);
 app.use("/api/v1/movies", movie);
 app.use("/api/v1/reviews", review);
-app.use("/api/v1/screen", screen);
+app.use("/api/v1/screens", screen);
 app.use("/api/v1/bookings", booking);
 
 app.get("/", (req, res) => {
