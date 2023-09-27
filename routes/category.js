@@ -13,9 +13,9 @@ let Category = require('../models/category')
   });
 
 // Create a new category
-app.post("/category", async (req, res) => {
+app.post("/", async (req, res) => {
     try {
-      let {cinema_id} = req.body;
+      const {cinema_id} = req.body;
 
       let cinema = await Cinema.findById(cinema_id)
   
