@@ -38,12 +38,9 @@ app.post('/', async (req, res) => {
 
         const review = new Review(reviewData);
         const savedReview = await review.save();
-        res.status(201).json({
-            status: "success",
-            data: savedReview,
-        });
-    } catch (err){
-        res.status(400).json({ err: err.message });
+        res.status(201).json(savedReview);
+    } catch (error){
+        res.status(400).json({ error: error.message });
     }
 })
 
