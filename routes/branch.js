@@ -7,7 +7,7 @@ const Cinema = require('../models/cinema');
 // Get all branches
 app.get("/", async (req, res) =>{
 	try{
-		const branches = await Branch.find();populate("cinema_id");
+		const branches = await Branch.find().populate("cinema_id");
 		res.json(branches);
 	} catch (error) {
     res.status(500).json({error: error.message});

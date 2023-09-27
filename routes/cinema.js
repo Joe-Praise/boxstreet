@@ -4,12 +4,13 @@ const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 const app = express.Router();
 const Cinema = require("../models/cinema");
+require("dotenv").config();
 
 // Configure Cloudinary with your API credentials
 cloudinary.config({
-  cloud_name: 'dcvc3e5k3',
-  api_key: '679192955852274',
-  api_secret: 'lXJHD3RbfvBUweWmOOmPzilpvZ4'
+  cloud_name:process.env.CLOUD_NAME, 
+  api_key:process.env.API_KEY,
+  api_secret:process.env.API_SECRET
 });
 
 // Get all cinemas
