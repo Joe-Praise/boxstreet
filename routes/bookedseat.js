@@ -27,7 +27,7 @@ app.get("/:id", async (req, res) => {
     //   "theather_id branch_id category_id user_id ['name', 'email', 'cinema_id','created_at'] movie_id"
     // );
     if (!bookedseat) {
-      res.status(404).json({ msg: "Seat not found", code: 404 });
+      res.status(404).json({ msg: "Seat not found!", code: 404 });
     } else {
       res.status(200).json({ status: "success", data: bookedseat });
     }
@@ -61,7 +61,7 @@ app.put("/:id", async (req, res) => {
     if (!bookedseat)
       return res
         .status(404)
-        .json({ msg: "The seat does not exist", code: 404 });
+        .json({ msg: "The seat does not exist.", code: 404 });
 
     let data = bookedseat._doc;
     bookedseat.overwrite({ ...data, ...req.body });

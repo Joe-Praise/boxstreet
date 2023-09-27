@@ -6,6 +6,7 @@ let app = express.Router();
 app.get("/", async (req, res) => {
   try {
     const movieschedule = await MovieSchedule.find();
+    console.log(movieschedule);
     res.status(200).json({
       status: "success",
       data: movieschedule,
@@ -55,7 +56,7 @@ app.put("/:id", async (req, res) => {
     if (!movieschedule)
       return res
         .status(404)
-        .json({ msg: "The movie schedule does not exist", code: 404 });
+        .json({ msg: "The movie schedule does not exist!", code: 404 });
 
     req.body.updated_at = Date.now();
     let data = movieschedule._doc;
