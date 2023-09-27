@@ -42,8 +42,8 @@ app.use("/api/v1/seats", seat);
 app.use("/api/v1/movieschedule", movieschedule);
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/movies", movie);
-app.use("/api/v1/review", review);
-app.use("/api/v1/screen", screen);
+app.use("/api/v1/reviews", review);
+app.use("/api/v1/screens", screen);
 
 app.get("/", (req, res) => {
   res.json({

@@ -1,22 +1,22 @@
 let Review = require('../models/review');
-let Cinema = require('../models/cinema');
-let Movie = require('../models/movie');
-let User = require('../models/user');
 let express = require('express');
 let app = express.Router()
 
 //get all review
-app.get('/', async function (req, res){
+app.get('/', async (req, res) => {
     try{
-        const reviews = await Review.find().populate("cinema_id", "movie_id", "user_id");
-        res.status(200).json(reviews)
+        const review = await Review.find().populate();
+        res.status(200).json({
+            status: "success",
+            data: review,
+        })
     } catch (error) {
         res.status(500).json({ error: error.message })
     }
 })
 
 //get a review by id
-app.get('/:id', async function (req, res){
+app.get('/:id', async (req, res) => {
     try{
         const reviewId = req.params.id;
         const review = await Review.findById(reviewId);
@@ -31,29 +31,24 @@ app.get('/:id', async function (req, res){
     }
 })
 
-//create a new screen
-app.post('/', async function (req, res){
+//create a new review
+app.post('/', async (req, res) => {
     try{
-        const {cinema_id, movie_id, user_id} = req.body;
+        const reviewData = req.body;
 
-        const cinema = await Cinema.findById(cinema_id);
-        const movie = await Movie.findById(movie_id);
-        const user = await User.findById(user_id);
-
-        if(!cinema) return res.status(500).send({msg: "Cinema does not exist"})
-        if(!movie) return res.status(500).send({msg: "Movie does not exist"})
-        if(!user) return res.status(500).send({msg: "User does not exist"})
-
-        let review = new Review(req.body);
-        await review.save();
-        res.send(review);
+        const review = new Review(reviewData);
+        const savedReview = await review.save();
+        res.status(201).json({
+            status: "success",
+            data: savedReview,
+        });
     } catch (err){
-        res.status(500).json({ err: err.message });
+        res.status(400).json({ err: err.message });
     }
 })
 
 //update a review by id
-app.put('/review/:id', async function (req, res){
+app.put('/:id', async (req, res) => {
     try{
         const {id} = req.params;
         const review = await Review.findById(id);
@@ -72,7 +67,7 @@ app.put('/review/:id', async function (req, res){
 })
 
 //delete a review
-app.delete('/review/:id', async function (req, res){
+app.delete('/:id', async (req, res) => {
     try{
         const {id} = req.params;
         const review = await Review.findById(id);
