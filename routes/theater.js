@@ -7,9 +7,12 @@ let Theater = require('../models/theater')
   // Get all theaters
   app.get('/', async (req, res) => {
     try {
-      let theaters = await theaters.find().populate("branch_id theater_id")
+      let theaters = await Theater.find().populate("branch_id")
       res.json(theaters)
-    }catch(e){}
+    }catch (e) {
+      console.error(e);
+      res.status(500).json({ error: 'An error occurred', code:500 });
+    }
   });
 
    // Get a theater by ID
@@ -52,7 +55,7 @@ app.post('/', async (req, res) => {
       const {id} = req.params;
       const theater = await Theater.findById(id);
   
-      if(!theater) return res.status(404).json({msg:"The id supplied does not exist", code:404 })
+      if(!theater) return res.status(404).json({msg: "The id supplied does not exist", code:404 })
      
       let data = theater._doc;
       theater.overwrite({...data, ...req.body})

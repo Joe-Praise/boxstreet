@@ -18,7 +18,7 @@ app.get("/:id", async (req, res) => {
     const cinemaId = req.params.id;
     const cinema = await Cinema.findById(cinemaId);
     if (!cinema) {
-      res.status(404).json({ msg: "Cinema not found", code:404 });
+      res.status(404).json({ msg: "Cinema not found", code: 404 });
     } else {
       res.status(200).json(cinema);
     }
@@ -46,10 +46,12 @@ app.put("/:id", async (req, res) => {
     const cinema = await Cinema.findById(id);
 
     if (!cinema)
-      return res.status(404).json({ msg: "The id supplied does not exist",code:404 });
+      return res
+        .status(404)
+        .json({ msg: "The id supplied does not exist", code: 404 });
 
     let data = cinema._doc;
-    cinema.overwrite({ ...data, ...req.body }); 
+    cinema.overwrite({ ...data, ...req.body });
     cinema.save();
 
     res.send({ msg: "Cinema updated", data: cinema });
@@ -84,10 +86,10 @@ app.delete("/:id", async (req, res) => {
     const cinema = await Cinema.findById(id);
 
     if (!cinema) {
-      res.status(404).json({ msg: "Cinema not found",code:404 });
+      res.status(404).json({ msg: "Cinema not found", code: 404 });
     } else {
       await cinema.deleteOne();
-      res.status(200).send({msg:"Cinema deleted successfully",code:200});
+      res.status(200).send({ msg: "Cinema deleted successfully", code: 200 });
     }
   } catch (err) {
     res.status(500).json({ err: err.message });
