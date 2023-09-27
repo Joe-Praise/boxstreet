@@ -80,8 +80,10 @@ app.delete("/:id", async (req, res) => {
     if (!seat) {
       res.status(404).json({ msg: "Seat not found", code: 404 });
     } else {
-      await seat.deleteOne();
-      res.status(200).send({ msg: "seat deleted successfully", code: 200 });
+      // await seat.deleteOne();
+      // res.status(200).send({ msg: "seat deleted successfully", code: 200 });
+      await Seat.findByIdAndUpdate(seat._id, { active: false });
+      res.status(200).json({ msg: "Seat successfully deleted" });
     }
   } catch (err) {
     res.status(500).json({ err: err.message });

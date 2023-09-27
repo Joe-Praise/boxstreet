@@ -12,5 +12,12 @@ const SeatSchema = new mongoose.Schema({
   booked: { type: Boolean, default: false },
   active: { type: Boolean },
 });
+
+SeatSchema.pre(/^find/, function (next) {
+  // hide seat with active field set to false
+  this.find({ active: { $ne: false } });
+  next();
+});
+
 const Seat = mongoose.model("seats", SeatSchema);
 module.exports = Seat;

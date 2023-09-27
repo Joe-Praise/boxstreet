@@ -5,9 +5,10 @@ let app = express.Router();
 // Get all booked seat
 app.get("/", async (req, res) => {
   try {
-    const bookedseat = await BookedSeat.find().populate(
-      "theather_id branch_id category_id user_id ['name', 'email', 'cinema_id','created_at'] movie_id"
-    );
+    const bookedseat = await BookedSeat.find();
+    // .populate(
+    //   "theather_id branch_id category_id user_id ['name', 'email', 'cinema_id','created_at'] movie_id"
+    // );
     res.status(200).json({
       status: "success",
       data: bookedseat,
@@ -21,9 +22,10 @@ app.get("/", async (req, res) => {
 app.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const bookedseat = await BookedSeat.findById(id).populate(
-      "theather_id branch_id category_id user_id ['name', 'email', 'cinema_id','created_at'] movie_id"
-    );
+    const bookedseat = await BookedSeat.findById(id);
+    // .populate(
+    //   "theather_id branch_id category_id user_id ['name', 'email', 'cinema_id','created_at'] movie_id"
+    // );
     if (!bookedseat) {
       res.status(404).json({ msg: "Seat not found", code: 404 });
     } else {
@@ -80,8 +82,10 @@ app.delete("/:id", async (req, res) => {
     if (!bookedseat) {
       res.status(404).json({ msg: "Seat not found", code: 404 });
     } else {
-      await bookedseat.deleteOne();
-      res.status(200).send({ msg: "seat deleted successfully", code: 200 });
+      // await bookedseat.deleteOne();
+      // res.status(200).send({ msg: "seat deleted successfully", code: 200 });
+      await BookedSeat.findByIdAndUpdate(bookedseat._id, { is_active: false });
+      res.status(200).json({ msg: "Booked seat successfully deleted" });
     }
   } catch (err) {
     res.status(500).json({ err: err.message });
