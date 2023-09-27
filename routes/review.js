@@ -24,7 +24,7 @@ app.get('/:id', async (req, res) => {
         if(!review) {
             res.status(404).json({ message: "Review not Found", code:404 })
         } else {
-            res.status(200).json(review)
+            res.status(200).json(review);
         }
     } catch(err){
         res.status(500).json({ err: err.message })

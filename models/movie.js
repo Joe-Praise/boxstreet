@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const MovieSchema = new mongoose.Schema({
   cinema_id: { type: String, ref: "cinemas" },
-  branch_id: { type: String, ref: "branches" },
+  // branch_id: { type: String, ref: "branches" },
   name: { type: String, },
   film_poster: { type: String, }, //image for the movie
   trailer: { type: String },
