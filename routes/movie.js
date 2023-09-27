@@ -1,20 +1,21 @@
 let Movie = require("../models/movie");
-let Branch = require("../models/branch");
-let Cinema = require("../models/cinema");
 let express = require("express");
 let app = express.Router();
 
 //get all movies
 app.get("/", async (req, res) => {
   try {
-    const movies = await Movie.find().populate("cinema_id", "branch_id");
-    res.status(200).json(movies);
+    const movie = await Movie.find().populate("cinema_id branch_id");
+    res.status(200).json({
+        status: "success",
+        data: movie,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-//get a branch by id
+//get a movie by id
 app.get("/:id", async (req, res) => {
   try {
     const movieId = req.params.id;
@@ -33,19 +34,15 @@ app.get("/:id", async (req, res) => {
 //create a new movie
 app.post("/", async (req, res) => {
   try {
-    const { cinema_id, branch_id } = req.body;
+    const movieData = req.body;
 
-    const cinema = await Cinema.findById(cinema_id);
-    const branch = await Branch.findById(branch_id);
+    const movie = new Movie(movieData);
+    const savedMovie = await movie.save();
 
-    if (!cinema)
-      return res.status(404).send({ msg: "Cinema does not exist", code: 404 });
-    if (!branch)
-      return res.status(404).send({ msg: "Branch does not exist", code: 404 });
-
-    const movie = new Movie(req.body);
-    await movie.save();
-    res.send(movie);
+    res.status(201).json({
+        status: "success",
+        data: savedMovie,
+    });
   } catch (err) {
     res.status(400).json({ err: err.message });
   }
@@ -65,7 +62,6 @@ app.put("/:id", async (req, res) => {
     let data = movie._doc;
     movie.overwrite({ ...data, ...req.body });
     movie.save();
-
     res.send({ msg: "Movie updated successfully", data: movie });
   } catch (err) {
     res.status(500).json({ err: err.message });
@@ -88,7 +84,7 @@ app.put("/:id/resources", async (req, res) => {
 });
 
 //delete a movie
-app.delete("/movie/:id", async (req, res) => {
+app.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const movie = await Movie.findById(id);

@@ -4,7 +4,7 @@ let Websetting = require('../models/websetting')
 
 
   // Get the websettings
-  app.get('/Websettings', async (req, res) => {
+  app.get('/', async (req, res) => {
     try {
       const websettings = await Websetting.find();
       res.status(200).json(websettings);
@@ -14,7 +14,7 @@ let Websetting = require('../models/websetting')
   });
 
 // Create a new websetting
-app.post('/Websetting', async (req, res) => {
+app.post('/', async (req, res) => {
     try {
       const websettingData = req.body;
       const websetting = new Websetting(websettingData);
@@ -26,7 +26,7 @@ app.post('/Websetting', async (req, res) => {
   });
     
   // Update the websettings
-  app.put('/Websetting', async (req, res) => {
+  app.put('/', async (req, res) => {
     try {
       const {id} = req.params;
       const websetting = await Websetting.findById(id);
@@ -49,7 +49,7 @@ app.post('/Websetting', async (req, res) => {
    app.delete('/:id', async (req, res) => {
     try {
       const {id} = req.params;
-      const websettings = await Websettings.findById(id);
+      const websettings = await Websetting.findById(id);
   
       if (!websettings) {
         res.status(404).json({ message: "websettings not found",code:404 });
