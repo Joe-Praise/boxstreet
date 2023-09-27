@@ -52,11 +52,12 @@ app.put("/:id", async (req, res) => {
     const { id } = req.params;
     const movieschedule = await MovieSchedule.findById(id);
 
-    if (!seat)
+    if (!movieschedule)
       return res
         .status(404)
         .json({ msg: "The movie schedule does not exist", code: 404 });
 
+    req.body.updated_at = Date.now();
     let data = movieschedule._doc;
     movieschedule.overwrite({ ...data, ...req.body });
     movieschedule.save();
@@ -76,10 +77,14 @@ app.delete("/:id", async (req, res) => {
     if (!movieschedule) {
       res.status(404).json({ msg: "Movie schedule not found", code: 404 });
     } else {
-      await seat.deleteOne();
-      res
-        .status(200)
-        .send({ msg: "Movie schedule deleted successfully", code: 200 });
+      // await seat.deleteOne();
+      // res
+      //   .status(200)
+      //   .send({ msg: "Movie schedule deleted successfully", code: 200 });
+      await MovieSchedule.findByIdAndUpdate(movieschedule._id, {
+        active: false,
+      });
+      res.status(200).json({ msg: "Movie schedule successfully deleted" });
     }
   } catch (err) {
     res.status(500).json({ err: err.message });
