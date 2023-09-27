@@ -16,11 +16,11 @@ const TheaterSchema = new mongoose.Schema({
       },
       unavailable_seat: {
         type: Number,
-        required: true
+        default:0
       },
       available_seat: {
         type: Number,
-        required: true
+        default:0
       },
       is_available: {
         type: Boolean
