@@ -7,7 +7,7 @@ let Category = require('../models/category')
   // Get all categories
   app.get("/ ", async function(req,res){
     try{
-      let categories = await Category.find().populate("cinema_id")
+      let categories = await Cinema.find().populate("cinema_id")
       res.json(categories)
     }catch(err){
       res.status(500).json({error: err.message});
