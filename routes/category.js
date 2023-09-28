@@ -5,7 +5,7 @@ let Category = require('../models/category')
 
 
   // Get all categories
-  app.get("/ ", async (req,res) =>{
+  app.get("/", async (req,res) =>{
     try{
       const categories = await Category.find().populate("cinema_id")
       res.json(categories)
