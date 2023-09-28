@@ -1,5 +1,6 @@
 let mongoose = require("mongoose");
 let express = require("express");
+const cors = require("cors");
 let app = express();
 require("dotenv").config();
 
@@ -30,6 +31,7 @@ mongoose.connection.on("error", (err) => console.log(err.message));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 app.use("/api/v1/cinemas", cinema);
 app.use("/api/v1/users", user);
@@ -43,7 +45,7 @@ app.use("/api/v1/seats", seat);
 app.use("/api/v1/movieschedule", movieschedule);
 app.use("/api/v1/movies", movie);
 app.use("/api/v1/reviews", review);
-app.use("/api/v1/screens", screen);
+app.use("/api/v1/screen", screen);
 app.use("/api/v1/bookings", booking);
 
 app.get("/", (req, res) => {
