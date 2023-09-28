@@ -27,7 +27,7 @@ app.get("/:id", async (req, res) => {
     //   "theather_id branch_id category_id"
     // );
     if (!seat) {
-      res.status(404).json({ msg: "Seat not found", code: 404 });
+      res.status(404).json({ msg: "Seat not found!", code: 404 });
     } else {
       res.status(200).json({ status: "success", data: seat });
     }

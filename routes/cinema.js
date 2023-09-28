@@ -1,8 +1,19 @@
 const express = require("express");
-let app = express.Router();
+const cloudinary = require('cloudinary').v2;
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+const app = express.Router();
 const Cinema = require("../models/cinema");
+require("dotenv").config();
 
-// / Get all cinemas
+// Configure Cloudinary with your API credentials
+cloudinary.config({
+  cloud_name:process.env.CLOUD_NAME, 
+  api_key:process.env.API_KEY,
+  api_secret:process.env.API_SECRET
+});
+
+// Get all cinemas
 app.get("/", async (req, res) => {
   try {
     const cinemas = await Cinema.find();
@@ -12,7 +23,7 @@ app.get("/", async (req, res) => {
   }
 });
 
-// / Get a cinema by ID
+// Get a cinema by ID
 app.get("/:id", async (req, res) => {
   try {
     const cinemaId = req.params.id;
@@ -27,7 +38,7 @@ app.get("/:id", async (req, res) => {
   }
 });
 
-// / Create a new cinema
+// Create a new cinema
 app.post("/", async (req, res) => {
   try {
     const cinemaData = req.body;
@@ -39,7 +50,7 @@ app.post("/", async (req, res) => {
   }
 });
 
-// / Update a cinema by ID
+// Update a cinema by ID
 app.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -50,36 +61,40 @@ app.put("/:id", async (req, res) => {
         .status(404)
         .json({ msg: "The id supplied does not exist", code: 404 });
 
-    let data = cinema._doc;
-    cinema.overwrite({ ...data, ...req.body });
-    cinema.save();
+    cinema.set({ ...req.body }); // Use set() to update document properties
+    const updatedCinema = await cinema.save();
 
-    res.send({ msg: "Cinema updated", data: cinema });
+    res.status(200).json({ msg: "Cinema updated", data: updatedCinema });
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
 });
 
-// / Upload image for cinema
-app.put("/:id/resources", async (req, res) => {
-	try {
-	  const { id } = req.params;
-	  const cinema = await cinema.findById(id);
-  
-	  if (!cinema)
-		return res.status(404).json({ msg: "The id supplied does not exist",code:404 });
-  
-	//   let data = cinema._doc;
-	//   cinema.overwrite({ ...data, ...req.body }); 
-	//   cinema.save();
-  
-	  res.send({ msg: "Cinema updated", data: cinema });
-	} catch (err) {
-	  res.status(500).json({ err: err.message });
-	}
-  });
+// Upload image for cinema
+app.post("/:id/resources", upload.single('image'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const cinema = await Cinema.findById(id);
 
-// / Delete a cinema by ID
+    if (!cinema)
+      return res.status(404).json({ msg: "The id supplied does not exist", code: 404 });
+
+    if (!req.file)
+      return res.status(400).json({ msg: "No file uploaded", code: 400 });
+
+    cloudinary.uploader.upload(req.file.path, (error, result) => {
+      if (error) {
+        return res.status(500).json({ error: 'Upload failed' });
+      }
+      res.json({ imageUrl: result.secure_url });
+    });
+
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
+
+// Delete a cinema by ID
 app.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -89,7 +104,7 @@ app.delete("/:id", async (req, res) => {
       res.status(404).json({ msg: "Cinema not found", code: 404 });
     } else {
       await cinema.deleteOne();
-      res.status(200).send({ msg: "Cinema deleted successfully", code: 200 });
+      res.status(200).json({ msg: "Cinema deleted successfully", code: 200 });
     }
   } catch (err) {
     res.status(500).json({ err: err.message });
@@ -97,3 +112,4 @@ app.delete("/:id", async (req, res) => {
 });
 
 module.exports = app;
+
