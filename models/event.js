@@ -10,6 +10,10 @@ const EventSchema = new mongoose.Schema({
         type: String,
         required: true,
       },
+      is_paid_event: {
+        type: Boolean,
+        default: true,
+      },
       event_date: {
         type: Date,
         default: Date.now 
