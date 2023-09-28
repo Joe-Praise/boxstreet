@@ -3,7 +3,7 @@ const Booking = require("../models/booking");
 let app = express.Router();
 
 // get all bookings
-app.get("/", async(req, res)=>{
+app.get("/getall", async(req, res)=>{
     let bookings;
     try {
       bookings = await Booking.find(); 
@@ -18,7 +18,7 @@ app.get("/", async(req, res)=>{
 
 
   // make bookings
-  app.post("/" , async(req, res)=>{
+  app.post("/book" , async(req, res)=>{
     try {
         const bookings = req.body;
         const booked = new Booking(bookings);
