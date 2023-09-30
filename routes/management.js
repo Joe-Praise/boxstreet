@@ -4,7 +4,7 @@ const Management = require("../models/management");
 const bcrypt = require("bcryptjs");
 
 // get all managers
-<<<<<<< HEAD
+
 app.get("/mngts/all", async (req, res) => {
   let mngts;
   try {
@@ -59,7 +59,7 @@ app.put("/mngt/:id", async (req, res) => {
 // delete a manager
 
 app.delete("/mngt/:id", async (req, res) => {
-=======
+
 app.get("/all", async (req, res) => {
   let mngts = [];
   let { branch_id, cinema_id } = req.query;
@@ -142,7 +142,7 @@ app.put("/:id", async (req, res) => {
 // delete a manager
 
 app.delete("/:id", async (req, res) => {
->>>>>>> ec2daf19b42d9c9a98bd788b328684c8133b6489
+
   try {
     const { id } = req.params;
     const mngt = await Management.findById(id);
@@ -164,7 +164,7 @@ app.post("/mngt", async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
-<<<<<<< HEAD
+
     const newUser = new Management({
       fullname: req.body.fullname,
       role: req.body.role,
@@ -178,8 +178,4 @@ app.post("/mngt", async (req, res) => {
   }
 });
 
-module.exports = app;
-=======
-
 module.exports = app
->>>>>>> ec2daf19b42d9c9a98bd788b328684c8133b6489
