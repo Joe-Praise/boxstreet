@@ -3,6 +3,11 @@ const mongoose = require("mongoose")
 const ManagementSchema = new mongoose.Schema({
     branch_id: {
         type: String,
+        required:true
+    },
+    cinema_id: {
+        type: String,
+        required:true
     },
     fullname: {
         type: String,
@@ -15,6 +20,14 @@ const ManagementSchema = new mongoose.Schema({
     },
     password: {
         type: String
+    },
+    email: {
+        type: String,
+        required:true
+    },
+    phone: {
+        type: String,
+        required:true
     },
 
     created_at: {
