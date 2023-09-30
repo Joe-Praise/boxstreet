@@ -105,6 +105,10 @@ app.post("/login", async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 802d5c3f13fcf8240c1895ea2eab6b63178778b8
 // forgot password, password reset and update password
 
 app.post("/forgot-password", async (req, res) => {
