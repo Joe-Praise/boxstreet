@@ -19,7 +19,7 @@ const SeatSchema = new mongoose.Schema({
 
 SeatSchema.pre(/^find/, function (next) {
   // hide users with active field set to false
-  this.find({ is_booked: { $ne: false } });
+  this.find({ is_booked: { $ne: true } });
   next();
 });
 
