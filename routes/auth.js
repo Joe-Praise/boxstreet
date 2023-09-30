@@ -75,6 +75,24 @@ app.post("/login", async (req, res) => {
   }
 });
 
+// Forgot passward
+app.post('/forgot-password',async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const oldUser = await User.findOne({email});
+    if(!oldUser){
+        return res.send({msg:"User does'nt exist!"});
+    }
+    
+
+  } catch (error) {
+
+    console.log(error.message)
+  }
+ 
+});
+
 // forgot password, password reset and update password
 
 module.exports = app;
