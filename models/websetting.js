@@ -9,6 +9,11 @@ const WebsettingSchema = new mongoose.Schema({
         type: String,
         required: true,
       },
-});
+      is_deleted: {
+        type: Boolean,
+        default:false
+      },
+},
+{ timestamps: true });
 const Websetting = mongoose.model("websettings", WebsettingSchema);
 module.exports = Websetting;

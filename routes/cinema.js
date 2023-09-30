@@ -5,7 +5,6 @@ const {upload,handleUpload} = require('../utils/upload')
 require("dotenv").config();
 
 
-
 // Get all archived cinema
 app.get("/archived", async (req, res) => {
   try {
@@ -94,6 +93,7 @@ app.put("/:id/archived", async (req, res) => {
     res.status(500).json({ err: err.message });
   }
 });
+
 // Upload image for cinema
 app.put("/:id/resources", upload.single("image"), async (req, res) => {
   try {
