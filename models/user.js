@@ -21,6 +21,7 @@ const UserSchema = new mongoose.Schema({
     // select: false,
   },
   active: { type: Boolean, default: true, select: false },
+  is_verified: { type: Boolean, default: false },
   cinema_id: { type: String, required: true },
   photo: { type: String },
   created_at: { type: Date, default: Date.now },
@@ -35,11 +36,11 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-UserSchema.pre(/^find/, function (next) {
-  // hide users with active field set to false
-  this.find({ active: { $ne: false } });
-  next();
-});
+// UserSchema.pre(/^find/, function (next) {
+//   // hide users with active field set to false
+//   this.find({ active: { $ne: false } });
+//   next();
+// });
 
 UserSchema.methods.correctPassword = async function (
   candidatePassword,

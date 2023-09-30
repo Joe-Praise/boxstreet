@@ -83,11 +83,12 @@ app.delete("/:id", Protect, async (req, res) => {
     if (!user) {
       res.status(404).json({ msg: "User not found", code: 404 });
     } else {
-      await User.findByIdAndUpdate(req.user._id, { active: false });
+      // await User.findByIdAndUpdate(req.user._id, { active: false });
+      await User.findByIdAndDelete(req.user._id);
       res.status(200).json({ msg: "User successfully deleted" });
     }
   } catch (err) {
-    res.status(500).json({ err: err.message }); 
+    res.status(500).json({ err: err.message });
   }
 });
 

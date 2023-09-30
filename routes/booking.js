@@ -77,7 +77,7 @@ app.delete("/:id", async (req, res) => {
         const savedBokings = await booked.save();
        res.status(200).json(savedBokings)
     } catch (err) {
-        res.status(500).json({error: err.message});
+        res.status(500).json({err: err.message});
     }
     
     } );
