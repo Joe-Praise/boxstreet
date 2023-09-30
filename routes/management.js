@@ -4,62 +4,6 @@ const Management = require("../models/management");
 const bcrypt = require("bcryptjs");
 
 // get all managers
-
-app.get("/mngts/all", async (req, res) => {
-  let mngts;
-  try {
-    mngts = await Management.find();
-  } catch (error) {
-    res.status(500).json({ error: err.message });
-  }
-  if (!mngts) {
-    return res.status(404).json("Manager not found");
-  }
-  return res.status(200).json(mngts);
-});
-
-// get a single manager
-app.get("/mngt/:id", async (req, res) => {
-  let mngt;
-  try {
-    mngt = await Management.findById(req.params.id);
-  } catch (error) {
-    console.log(error);
-  }
-  if (!mngt) {
-    return res.status(400).json("You are not a Manager");
-  }
-  return res.status(200).json(mngt);
-});
-
-// update a manager
-app.put("/mngt/:id", async (req, res) => {
-  const { fullname, branch_id, role } = req.body;
-  const mngtId = req.params.id;
-  let mngt;
-  try {
-    mngt = await Management.findByIdAndUpdate(
-      mngtId,
-      {
-        $set: req.body,
-      },
-      { new: true }
-    );
-  } catch (error) {
-    console.log(error);
-  }
-  if (!mngt) {
-    return res
-      .status(500)
-      .json({ msg: "Unable to Update manager.", code: 500 });
-  }
-  return res.status(200).json(mngt);
-});
-
-// delete a manager
-
-app.delete("/mngt/:id", async (req, res) => {
-
 app.get("/all", async (req, res) => {
   let mngts = [];
   let { branch_id, cinema_id } = req.query;
@@ -77,7 +21,6 @@ app.get("/all", async (req, res) => {
   return res.status(200).json(mngts)
 });
 
-
 // get a single manager
 app.get("/:id", async (req, res) => {
 
@@ -92,8 +35,6 @@ app.get("/:id", async (req, res) => {
   }
   return res.status(200).json(mngt)
 });
-
-
 
 // create a manager
 app.post("/", async (req, res) => {
@@ -119,7 +60,6 @@ app.post("/", async (req, res) => {
   }
 });
 
-
 // update a manager
 app.put("/:id", async (req, res) => {
   const { fullname, branch_id, role, } = req.body;
@@ -138,9 +78,7 @@ app.put("/:id", async (req, res) => {
   return res.status(200).json(mngt);
 });
 
-
 // delete a manager
-
 app.delete("/:id", async (req, res) => {
 
   try {

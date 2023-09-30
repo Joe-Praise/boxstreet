@@ -1,7 +1,21 @@
 const express = require('express');
 let app = express.Router();
-let Websetting = require('../models/websetting')
+let Websetting = require('../models/websetting');
+const {upload,handleUpload} = require('../utils/upload')
+require("dotenv").config();
 
+
+// Get all archived websetting
+app.get("/archived", async (req, res) => {
+  try {
+    const websetting = await Websetting.find({ is_deleted: true });
+
+    res.send(websetting);
+  } catch (error) {
+    // console.error('Error fetching archived cinemas:', error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
   // Get the websettings
   app.get('/', async (req, res) => {
@@ -12,6 +26,21 @@ let Websetting = require('../models/websetting')
       res.status(500).json({ error: error.message });
     }
   });
+
+  // Get a websetting by ID
+app.get("/:id", async (req, res) => {
+  try {
+    const websettingId = req.params.id;
+    const websetting = await Websetting.findById(websettingId);
+    if (!websetting) {
+      res.status(404).json({ msg: "websetting not found", code: 404 });
+    } else {
+      res.status(200).json(websetting);
+    }
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+}); 
 
 // Create a new websetting
 app.post('/', async (req, res) => {
