@@ -11,8 +11,8 @@ app.get("/", async (req, res) => {
       status: "success",
       data: movieschedule,
     });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
   }
 });
 
@@ -42,8 +42,8 @@ app.post("/", async (req, res) => {
       status: "success",
       data: savedMovieSchedule,
     });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+  } catch (err) {
+    res.status(400).json({ err: err.message });
   }
 });
 

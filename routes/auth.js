@@ -105,24 +105,6 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// Forgot passward
-app.post('/forgot-password',async (req, res) => {
-  const { email } = req.body;
-
-  try {
-    const oldUser = await User.findOne({email});
-    if(!oldUser){
-        return res.send({msg:"User does'nt exist!"});
-    }
-    
-
-  } catch (error) {
-
-    console.log(error.message)
-  }
- 
-});
-
 // forgot password, password reset and update password
 
 app.post("/forgot-password", async (req, res) => {
@@ -132,7 +114,7 @@ app.post("/forgot-password", async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    req.status(400).json({
+    req.status(404).json({
       msg: "User does not exist!",
     });
   }
@@ -143,9 +125,6 @@ app.post("/forgot-password", async (req, res) => {
   // const cinema
   // console.log(response.data);
   const message = `Forgot your password? \nHere's your code: ${response.data.code}`;
-
-  // console.log(html);
-  // console.log(response.data.code);
 
   try {
     sendEmail({

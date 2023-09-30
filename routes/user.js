@@ -20,8 +20,8 @@ app.get("/", async (req, res) => {
       status: "success",
       data: user,
     });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
   }
 });
 
@@ -43,7 +43,7 @@ app.get("/:id", async (req, res) => {
 // Update a user by ID
 app.patch("/:id", Protect, async (req, res) => {
   try {
-    // 1) Create error if user POST's password data
+    // 1) Create err if user POST's password data
     if (req.body.password) {
       return res.status(400).json({
         msg: "This route is not for password updates. Please use /updateMyPassword.",
