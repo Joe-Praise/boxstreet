@@ -41,13 +41,13 @@ app.get("/:id", async (req, res) => {
 // create a manager
 app.post("/", async (req, res) => {
   try {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    // const salt = await bcrypt.genSalt(10);
+    // const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
     const newUser = new Management({
       fullname: req.body.fullname,
       role: req.body.role,
-      password: hashedPassword,
+      password: req.body.password,
       cinema_id: req.body.cinema_id,
       phone: req.body.phone,
       email: req.body.email,
