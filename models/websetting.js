@@ -7,7 +7,7 @@ const WebsettingSchema = new mongoose.Schema({
       },
       website_logo: {
         type: String,
-        required: true,
+        // required: true,
       },
       is_deleted: {
         type: Boolean,
