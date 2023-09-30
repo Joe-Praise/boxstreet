@@ -151,8 +151,8 @@ app.delete("/:id", async (req, res) => {
     if (!cinema) {
       res.status(404).json({ msg: "Cinema not found", code: 404 });
     } else {
-      const archivedCinema = new ArchivedCinema(cinema.toObject());
-      await archivedCinema.save();
+    //   const archivedCinema = new ArchivedCinema(cinema.toObject());
+    //   await archivedCinema.save();
 
       await cinema.deleteOne();
 

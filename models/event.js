@@ -21,6 +21,10 @@ const EventSchema = new mongoose.Schema({
       event_description: {
         type: String,
       },
-});
+      is_deleted: {
+        type: Boolean,
+        default:false
+      },
+},  { timestamps: true });
 const Event = mongoose.model("events", EventSchema);
 module.exports = Event;
