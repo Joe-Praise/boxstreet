@@ -32,7 +32,6 @@ const BookingSchema = new mongoose.Schema({
 
     counter_id: {
         type: String,
-        required: true,
         ref: "managements"
     },
 
