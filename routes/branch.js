@@ -85,4 +85,21 @@ app.delete("/:id", async (req, res) => {
   }
 });
 
+//Get all branches in a particular branch
+app.get("/cinemabranches", async (req, res) => {
+  try{
+    const cinemaId = await Branch.find("cinema_id");
+    const cinemabranch = await Branch.find(cinemaId);
+
+    if(!cinemabranch) {
+      res.status(404).json({msg: "This cinema is not found", code: 404})
+    } else {
+      res.status(200).json(cinemabranch)
+    }
+
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
+
 module.exports = app;
