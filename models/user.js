@@ -36,11 +36,11 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-// UserSchema.pre(/^find/, function (next) {
-//   // hide users with active field set to false
-//   this.find({ active: { $ne: false } });
-//   next();
-// });
+UserSchema.pre(/^find/, function (next) {
+  // hide users with active field set to false
+  this.find({ active: { $ne: false } });
+  next();
+});
 
 UserSchema.methods.correctPassword = async function (
   candidatePassword,

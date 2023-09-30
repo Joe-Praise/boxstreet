@@ -5,16 +5,15 @@ let app = express.Router();
 // Get all seats
 app.get("/", async (req, res) => {
   try {
-    const seat = await Seat.find();
-    // .populate(
-    //   "theather_id branch_id category_id"
-    // );
+    const seat = await Seat.find().populate(
+      "theather_id branch_id category_id"
+    );
     res.status(200).json({
       status: "success",
       data: seat,
     });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
   }
 });
 
@@ -22,10 +21,9 @@ app.get("/", async (req, res) => {
 app.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const seat = await Seat.findById(id);
-    // .populate(
-    //   "theather_id branch_id category_id"
-    // );
+    const seat = await Seat.findById(id).populate(
+      "theather_id branch_id category_id"
+    );
     if (!seat) {
       res.status(404).json({ msg: "Seat not found!", code: 404 });
     } else {
@@ -47,8 +45,8 @@ app.post("/", async (req, res) => {
       status: "success",
       data: savedSeat,
     });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+  } catch (err) {
+    res.status(400).json({ err: err.message });
   }
 });
 

@@ -5,14 +5,17 @@ let app = express.Router();
 // Get all movie schedule
 app.get("/", async (req, res) => {
   try {
-    const movieschedule = await MovieSchedule.find();
+    const movieschedule = await MovieSchedule.find().populate(
+      "branch_id cinema_id"
+    );
+
     console.log(movieschedule);
     res.status(200).json({
       status: "success",
       data: movieschedule,
     });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
   }
 });
 
@@ -20,7 +23,9 @@ app.get("/", async (req, res) => {
 app.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const movieschedule = await MovieSchedule.findById(id);
+    const movieschedule = await MovieSchedule.findById(id).populate(
+      "branch_id cinema_id"
+    );
     if (!movieschedule) {
       res.status(404).json({ msg: "Movie schedule not found", code: 404 });
     } else {
@@ -42,8 +47,8 @@ app.post("/", async (req, res) => {
       status: "success",
       data: savedMovieSchedule,
     });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+  } catch (err) {
+    res.status(400).json({ err: err.message });
   }
 });
 
