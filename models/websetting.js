@@ -7,8 +7,13 @@ const WebsettingSchema = new mongoose.Schema({
       },
       website_logo: {
         type: String,
-        required: true,
+        // required: true,
       },
-});
+      is_deleted: {
+        type: Boolean,
+        default:false
+      },
+},
+{ timestamps: true });
 const Websetting = mongoose.model("websettings", WebsettingSchema);
 module.exports = Websetting;

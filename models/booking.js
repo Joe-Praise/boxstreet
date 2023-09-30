@@ -3,97 +3,84 @@ const mongoose = require("mongoose")
 const BookingSchema = new mongoose.Schema({
     cinema_id: {
         type: String,
-    
+        required:true,
         ref: "cinemas"
     },
-
     schedule_id: {
         type: String,
-        
+        required:true,
         ref: "schedules"
     },
-
     user_id: {
         type: String,
-        
+        required:true,
         ref: "users"
     },
     theater_id: {
         type: String,
-        
+        required:true,
         ref: "theaters"
     },
-
+    branch_id: {
+        type: String,
+        required:true,
+        ref: "branches"
+    },
     movie_id: {
         type: String,
-        
+        required:true,
         ref: "movies"
     },
-
+    movie_price: {
+        type: Number,
+        required:true
+    },
     counter_id: {
         type: String,
+        default:"",
         ref: "managements"
     },
-
     booking_type: {
         type: String,
-        enum:["ONLINE","ONSITE"],
-        uppercase:true
+        enum: ["ONLINE", "ONSITE"],
+        uppercase: true
     },
-
     fullname: {
         type: String,
-        
+        required:true,
     },
-
     phone: {
         type: String,
-    
+        required:true,
     },
-
     email: {
         type: String,
-        
+        required:true,
     },
-
-    price: {
+    seat_price: {
         type: Number,
-        
+        required:true,
     },
-
-    quantity: {
-        type: Number,
-        
-    },
-
     sub_total: {
         type: Number,
-        
     },
-
-    incentive: {
-        type: String,
-        
-    },
-
     seat_number: {
         type: String,
-        
     },
-
     ticket_type: {
         type: String,
-        
     },
-
     ticket_no: {
         type: String,
-        
+        required:true
     },
-
     is_checked: {
         type: Boolean,
-        default:false
+        default: false
+    },
+    checked_in_at: {
+        type: Date,
+        default: null,
     },
     created_at: {
         type: Date,

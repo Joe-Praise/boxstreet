@@ -1,7 +1,6 @@
 const express = require("express");
 let app = express.Router();
 const Management = require("../models/management");
-const bcrypt = require("bcryptjs");
 
 app.get("/all", async (req, res) => {
   let mngts = [];
@@ -41,9 +40,6 @@ app.get("/:id", async (req, res) => {
 // create a manager
 app.post("/", async (req, res) => {
   try {
-    // const salt = await bcrypt.genSalt(10);
-    // const hashedPassword = await bcrypt.hash(req.body.password, salt);
-
     const newUser = new Management({
       fullname: req.body.fullname,
       role: req.body.role,
@@ -56,7 +52,7 @@ app.post("/", async (req, res) => {
     const user = await newUser.save();
     res.status(200).json({ msg: "Manager Created", data: user });
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json(err);
   }
 });
 
@@ -85,6 +81,7 @@ app.put("/:id", async (req, res) => {
 });
 
 // delete a manager
+
 app.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;

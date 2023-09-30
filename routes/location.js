@@ -41,6 +41,24 @@ app.post('/', async (req, res) => {
     }
 })
 
+//update a location
+app.put('/:id', async (req, res) => {
+    try{
+        const {id} = req.params;
+        const location = await Location.findById(id);
+    
+        if(!location) return res.status(404).json({msg: "Id does not exist", code:404 })
+        
+        let data = location._doc;
+        location.overwrite({...data, ...req.body})
+        location.save();
+  
+        res.send({msg:"Location updated", data:location})
+    } catch{
+        res.status(500).json({ err: err.message })
+    }
+})
+
 //delete a location
 app.delete('/:id', async (req, res) => {
     try{
