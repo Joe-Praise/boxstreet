@@ -1,12 +1,23 @@
 const express = require("express");
+const fs = require("fs");
 const User = require("../models/user");
+const Cinema = require("../models/cinema");
+const Verification = require("../models/verification");
 let app = express.Router();
 const jwt = require("jsonwebtoken");
+const axios = require("axios");
+const sendEmail = require("../utils/email");
 
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
+
+require("dotenv").config();
+const VERIFICATION_URL =
+  process.env.MODE == "PROD"
+    ? "https://boxstreet.onrender.com/api/v1/verifications"
+    : "http://localhost:5000/api/v1/verifications";
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
@@ -44,9 +55,28 @@ app.post("/signup", async (req, res) => {
       cinema_id: req.body.cinema_id,
       photo: req.body.photo,
     };
+
+    const data = {
+      email: userData.email,
+      cinema_id: userData.cinema_id,
+    };
+
+    axios.post(VERIFICATION_URL, data);
+
     const user = new User(userData);
     const savedUser = await user.save();
-    createSendToken(savedUser, 201, res);
+
+    // Remove password from the output
+    savedUser.password = undefined;
+    savedUser.active = undefined;
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        savedUser,
+      },
+    });
+    // createSendToken(savedUser, 201, res);
   } catch (err) {
     res.status(400).json({ err: err.message });
   }
@@ -75,24 +105,59 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// Forgot passward
-app.post('/forgot-password',async (req, res) => {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 802d5c3f13fcf8240c1895ea2eab6b63178778b8
+// forgot password, password reset and update password
+
+app.post("/forgot-password", async (req, res) => {
+  // 1) Get user based on posted email
+
   const { email } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    req.status(404).json({
+      msg: "User does not exist!",
+    });
+  }
+
+  const data = { email, cinema_id: user.cinema_id };
+
+  const response = await axios.post(VERIFICATION_URL, data);
+  // const cinema
+  // console.log(response.data);
+  const message = `Forgot your password? \nHere's your code: ${response.data.code}`;
 
   try {
-    const oldUser = await User.findOne({email});
-    if(!oldUser){
-        return res.send({msg:"User does'nt exist!"});
-    }
-    
+    sendEmail({
+      email: response.data.email,
+      subject: "Your password reset code (valid for 15 mins)",
+      message,
+      // html: html,
+    });
 
-  } catch (error) {
-
-    console.log(error.message)
+    res.status(200).json({
+      status: "success",
+      code: response.data.code,
+      message: "Code sent to email",
+    });
+  } catch (err) {
+    // response.code = undefined;
+    // response.is_active = false;
+    // await response.save({ validateBeforeSave: false });
+    console.log(err.message);
+    // res.status(500).json({ msg: "There was an error sending the code!" });
   }
- 
-});
 
-// forgot password, password reset and update password
+  // const user = await User.findOne(email);
+  // res.json({
+  //   data: {
+  //     user
+  //   },
+  // });
+  // 2) Generate random reset token
+});
 
 module.exports = app;

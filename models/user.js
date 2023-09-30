@@ -21,6 +21,7 @@ const UserSchema = new mongoose.Schema({
     // select: false,
   },
   active: { type: Boolean, default: true, select: false },
+  is_verified: { type: Boolean, default: false },
   cinema_id: { type: String, required: true },
   photo: { type: String },
   created_at: { type: Date, default: Date.now },
