@@ -1,22 +1,27 @@
 const express = require("express");
-const cloudinary = require('cloudinary').v2;
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
 const app = express.Router();
 const Cinema = require("../models/cinema");
+const {upload,handleUpload} = require('../utils/upload')
 require("dotenv").config();
 
-// Configure Cloudinary with your API credentials
-cloudinary.config({
-  cloud_name:process.env.CLOUD_NAME, 
-  api_key:process.env.API_KEY,
-  api_secret:process.env.API_SECRET
+
+
+// Get all archived cinema
+app.get("/archived", async (req, res) => {
+  try {
+    const cinemas = await Cinema.find({ is_deleted: true });
+
+    res.send(cinemas);
+  } catch (error) {
+    // console.error('Error fetching archived cinemas:', error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 // Get all cinemas
 app.get("/", async (req, res) => {
   try {
-    const cinemas = await Cinema.find();
+    const cinemas = await Cinema.find({ is_deleted: false });
     res.status(200).json(cinemas);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -61,7 +66,7 @@ app.put("/:id", async (req, res) => {
         .status(404)
         .json({ msg: "The id supplied does not exist", code: 404 });
 
-    cinema.set({ ...req.body }); // Use set() to update document properties
+    cinema.set({ ...req.body });
     const updatedCinema = await cinema.save();
 
     res.status(200).json({ msg: "Cinema updated", data: updatedCinema });
@@ -70,31 +75,74 @@ app.put("/:id", async (req, res) => {
   }
 });
 
-// Upload image for cinema
-app.post("/:id/resources", upload.single('image'), async (req, res) => {
+// Archieve a cinema by ID
+app.put("/:id/archived", async (req, res) => {
   try {
     const { id } = req.params;
     const cinema = await Cinema.findById(id);
 
     if (!cinema)
-      return res.status(404).json({ msg: "The id supplied does not exist", code: 404 });
+      return res
+        .status(404)
+        .json({ msg: "The id supplied does not exist", code: 404 });
 
-    if (!req.file)
-      return res.status(400).json({ msg: "No file uploaded", code: 400 });
+    cinema.is_deleted = req.body.status;
+    await cinema.save();
 
-    cloudinary.uploader.upload(req.file.path, (error, result) => {
-      if (error) {
-        return res.status(500).json({ error: 'Upload failed' });
-      }
-      res.json({ imageUrl: result.secure_url });
-    });
-
+    res.status(200).json({ msg: "Cinema archieved" });
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
 });
+// Upload image for cinema
+app.put("/:id/resources", upload.single("image"), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const cinema = await Cinema.findById(id);
+
+    if (!cinema) {
+      return res
+        .status(404)
+        .json({ msg: "The id supplied does not exist", code: 404 });
+    }
+
+    if (req.file) {
+      const b64 = Buffer.from(req.file.buffer).toString("base64");
+      let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+      const data = await handleUpload(dataURI);
+
+      cinema.image = data.url;
+      await cinema.save();
+      res.json({ msg: "Data saved", code: 200 });
+    } else {
+      res.json({
+        msg: "Cinema cannot be saved without any image",
+        code: 400,
+      });
+    }
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ err: "Server error has occurred" });
+  }
+});
 
 // Delete a cinema by ID
+// app.delete("/:id", async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const cinema = await Cinema.findById(id);
+
+//     if (!cinema) {
+//       res.status(404).json({ msg: "Cinema not found", code: 404 });
+//     } else {
+//       await cinema.deleteOne();
+//       res.status(200).json({ msg: "Cinema deleted successfully", code: 200 });
+//     }
+//   } catch (err) {
+//     res.status(500).json({ err: err.message });
+//   }
+// });
+
 app.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -103,7 +151,11 @@ app.delete("/:id", async (req, res) => {
     if (!cinema) {
       res.status(404).json({ msg: "Cinema not found", code: 404 });
     } else {
+      const archivedCinema = new ArchivedCinema(cinema.toObject());
+      await archivedCinema.save();
+
       await cinema.deleteOne();
+
       res.status(200).json({ msg: "Cinema deleted successfully", code: 200 });
     }
   } catch (err) {
@@ -112,4 +164,3 @@ app.delete("/:id", async (req, res) => {
 });
 
 module.exports = app;
-
