@@ -8,9 +8,11 @@ let codeGenerator = require("../utils/codeGenerator");
 // Get all verifications
 app.get("/", async (req, res) => {
   try {
-    let verifications = await verifications.find().populate("cinema_id");
+    let verifications = await Verification.find().populate("cinema_id");
     res.json(verifications);
-  } catch (e) {}
+  } catch (e) {
+    console.log(e.message);
+  }
 });
 
 // Get a verification by ID
@@ -58,7 +60,7 @@ app.post("/verify", async (req, res) => {
     if (!verify.is_active) return res.json({ msg: "Code is already expired" });
 
     time =
-      ((Date.now() - new Date(verify.createdAt).getTime()) / 1000) * 60 * 15;
+      ((Date.now() - new Date(verify.created_at).getTime()) / 1000) * 60 * 15;
 
     if (time > 15) {
       verify.is_active = false;
@@ -69,7 +71,6 @@ app.post("/verify", async (req, res) => {
     // call the user and set the is_verified = true
     let user = await User.findOne({ email });
     if (user) {
-      
       verify.is_active = false;
       verify.save();
 
@@ -79,13 +80,11 @@ app.post("/verify", async (req, res) => {
       res.json({
         msg: "Verfication successfull",
       });
-
     } else {
       res.status(404).json({
         msg: "user email does not exist",
       });
     }
- 
   } catch (err) {
     res.status(400).json({ err: err.message });
   }
