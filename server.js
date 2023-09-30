@@ -11,15 +11,14 @@ const theater = require("./routes/theater");
 const category = require("./routes/category");
 const verification = require("./routes/verification");
 const websettings = require("./routes/websettings");
-const bookedseat = require("./routes/bookedseat");
 const seat = require("./routes/seat");
 const movieschedule = require("./routes/movieschedule");
 const movie = require("./routes/movie");
 const review = require("./routes/review");
 const screen = require("./routes/screen");
 const booking = require("./routes/booking");
-const management = require("./routes/management")
-const location = require("./routes/location")
+const management = require("./routes/management");
+const location = require("./routes/location");
 const auth = require("./routes/auth");
 
 let PORT = process.env.PORT;
@@ -44,7 +43,6 @@ app.use("/api/v1/categories", category);
 app.use("/api/v1/theaters", theater);
 app.use("/api/v1/verifications", verification);
 app.use("/api/v1/websettings", websettings);
-app.use("/api/v1/bookedseats", bookedseat);
 app.use("/api/v1/seats", seat);
 app.use("/api/v1/movieschedule", movieschedule);
 app.use("/api/v1/movies", movie);
