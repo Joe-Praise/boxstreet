@@ -5,7 +5,9 @@ let app = express.Router();
 // Get all seats
 app.get("/", async (req, res) => {
   try {
-    const seat = await Seat.find().populate("theater_id branch_id category_id");
+    const seat = await Seat.find().populate(
+      "theater_id branch_id category_id cinema_id"
+    );
     res.status(200).json({
       status: "success",
       data: seat,

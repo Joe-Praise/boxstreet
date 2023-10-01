@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const SeatSchema = new mongoose.Schema({
   theater_id: { type: String, required: true, ref: "theaters" },
 
-  cinema_id: { type: String, required: true },
+  cinema_id: { type: String, required: true, ref: "cinemas" },
 
   branch_id: { type: String, required: true, ref: "branches" },
   category_id: {
@@ -18,8 +18,8 @@ const SeatSchema = new mongoose.Schema({
 });
 
 SeatSchema.pre(/^find/, function (next) {
-  // hide users with active field set to false
-  this.find({ is_booked: { $ne: true } });
+  // hide users with is deleted field set to true
+  this.find({ is_deleted: { $eq: false } });
   next();
 });
 

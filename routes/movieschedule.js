@@ -1,5 +1,6 @@
 const express = require("express");
 const MovieSchedule = require("../models/movie_schedule");
+const { upload, handleUpload } = require("../utils/upload");
 let app = express.Router();
 
 // Get all movie schedule
@@ -55,6 +56,7 @@ app.post("/", async (req, res) => {
 // Update a movie schedule by ID
 app.put("/:id", async (req, res) => {
   try {
+    req.body.image = undefined;
     const { id } = req.params;
     const movieschedule = await MovieSchedule.findById(id);
 
@@ -71,6 +73,38 @@ app.put("/:id", async (req, res) => {
     res.send({ msg: "Movie schedule details updated", data: movieschedule });
   } catch (err) {
     res.status(500).json({ err: err.message });
+  }
+});
+
+// Upload image for movie schedule
+app.put("/:id/resources", upload.single("image"), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const movieschedule = await MovieSchedule.findById(id);
+
+    if (!movieschedule) {
+      return res
+        .status(404)
+        .json({ msg: "The id supplied does not exist", code: 404 });
+    }
+
+    if (req.file) {
+      const b64 = Buffer.from(req.file.buffer).toString("base64");
+      let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+      const data = await handleUpload(dataURI);
+
+      movieschedule.image = data.url;
+      await movieschedule.save({ validateBeforeSave: false });
+      res.json({ msg: "Data saved", code: 200 });
+    } else {
+      res.json({
+        msg: "Movie schedule cannot be saved without any image",
+        code: 400,
+      });
+    }
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ err: "Server error has occurred" });
   }
 });
 

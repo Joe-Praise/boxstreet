@@ -1,6 +1,7 @@
 const express = require("express");
 let app = express.Router();
 const Management = require("../models/management");
+const { upload, handleUpload } = require("../utils/upload");
 
 app.get("/all", async (req, res) => {
   let mngts = [];
@@ -60,6 +61,7 @@ app.post("/", async (req, res) => {
 app.put("/:id", async (req, res) => {
   const { fullname, branch_id, role } = req.body;
   const mngtId = req.params.id;
+  req.body.image = undefined;
   let mngt;
   try {
     mngt = await Management.findByIdAndUpdate(
@@ -78,6 +80,33 @@ app.put("/:id", async (req, res) => {
       .json({ msg: "Unable to Update manager.", code: 500 });
   }
   return res.status(200).json(mngt);
+});
+
+// Upload image for manager
+app.put("/:id/resources", upload.single("image"), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const management = await Management.findById(id);
+
+    if (!management) {
+      return res
+        .status(404)
+        .json({ msg: "The id supplied does not exist", code: 404 });
+    }
+
+    if (req.file) {
+      const b64 = Buffer.from(req.file.buffer).toString("base64");
+      let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+      const data = await handleUpload(dataURI);
+
+      management.image = data.url;
+      await management.save();
+      res.json({ msg: "Data saved", code: 200 });
+    }
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ err: "Server error has occurred" });
+  }
 });
 
 // delete a manager

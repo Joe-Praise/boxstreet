@@ -1,6 +1,7 @@
 const express = require("express");
 const User = require("../models/user");
 const { Protect } = require("../middleware/auth");
+const { upload, handleUpload } = require("../utils/upload");
 let app = express.Router();
 
 const filterObj = (obj, ...allowedFields) => {
@@ -51,7 +52,7 @@ app.patch("/:id", Protect, async (req, res) => {
     }
 
     // 2) filter for unwanted field that are not allowed to be updated
-    const filteredBody = filterObj(req.body, "name", "email", "photo");
+    const filteredBody = filterObj(req.body, "name", "email");
 
     // 3) Update user document
     const updatedUser = await User.findByIdAndUpdate(
@@ -71,6 +72,33 @@ app.patch("/:id", Protect, async (req, res) => {
     res.status(200).json({ msg: "User updated", data: updatedUser });
   } catch (err) {
     res.status(500).json({ err: err.message });
+  }
+});
+
+// Upload image for user
+app.put("/:id/resources", upload.single("image"), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ msg: "The id supplied does not exist", code: 404 });
+    }
+
+    if (req.file) {
+      const b64 = Buffer.from(req.file.buffer).toString("base64");
+      let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+      const data = await handleUpload(dataURI);
+
+      user.image = data.url;
+      await user.save({ validateBeforeSave: false });
+      res.json({ msg: "Data saved", code: 200 });
+    }
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ err: "Server error has occurred" });
   }
 });
 
