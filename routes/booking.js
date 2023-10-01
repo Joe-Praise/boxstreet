@@ -162,6 +162,11 @@ app.delete("/:id", async (req, res) => {
     if (!booked) {
       res.status(404).json({ msg: "Booking not found", code: 404 });
     } else {
+      const { seat_number, branch_id, theater_id } = booked;
+      const seat_query = { seat_number, branch_id, theater_id };
+      const seat = await Seat.findOne(seat_query);
+      seat.is_booked = false;
+      await seat.save();
       await booked.deleteOne();
       res.status(200).json({ msg: "Booking deleted", code: 200 });
     }
