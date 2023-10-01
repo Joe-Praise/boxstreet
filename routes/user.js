@@ -1,5 +1,6 @@
 const express = require("express");
 const User = require("../models/user");
+const Booking = require("../models/booking");
 const { Protect } = require("../middleware/auth");
 const { upload, handleUpload } = require("../utils/upload");
 let app = express.Router();
@@ -36,6 +37,35 @@ app.get("/:id", async (req, res) => {
     } else {
       res.status(200).json({ status: "success", data: user });
     }
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
+
+// get all movies a user has booked
+
+app.get("/:id/bookings", async (req, res) => {
+  try {
+    // 1) get the user from the database
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found", code: 404 });
+    }
+
+    // 2) get all bookings with the user's id present
+    const allBookings = await Booking.find({ user_id: id });
+    console.log(allBookings);
+
+    if (allBookings.length < 1) {
+      return res
+        .status(200)
+        .json({ msg: "No booking found for this user", code: 200 });
+    }
+    // 3) send the bookings as a response to the query
+    res.status(200).json({ status: "success", data: allBookings });
   } catch (err) {
     res.status(500).json({ err: err.message });
   }

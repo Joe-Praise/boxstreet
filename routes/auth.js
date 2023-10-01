@@ -44,6 +44,28 @@ const createSendToken = (user, statusCode, res) => {
   });
 };
 
+const forgotPassword = async (email, user, res) => {
+  const data = { email, cinema_id: user.cinema_id };
+
+  const response = await axios.post(VERIFICATION_URL, data);
+  const responseData = response.data;
+
+  const message = `Forgot your password? \nHere's reset code: ${responseData.code}`;
+
+  sendEmail({
+    email: responseData.email,
+    subject: "Your password reset code (valid for 15 mins)",
+    message,
+    // html: html,
+  });
+
+  res.status(200).json({
+    status: "success",
+    code: responseData.code,
+    message: "Code sent to email",
+  });
+};
+
 // Create a new user
 app.post("/signup", async (req, res) => {
   try {
@@ -138,8 +160,7 @@ app.post("/management-login", async (req, res) => {
   }
 });
 
-// forgot password, password reset and update password
-
+// user forgot password
 app.post("/forgot-password", async (req, res) => {
   try {
     // 1) Get user based on posted email
@@ -147,35 +168,40 @@ app.post("/forgot-password", async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      req.status(404).json({
+      return req.status(404).json({
         msg: "User does not exist!",
       });
     }
 
-    const data = { email, cinema_id: user.cinema_id };
-
-    const response = await axios.post(VERIFICATION_URL, data);
-    const responseData = response.data;
-
-    const message = `Forgot your password? \nHere's reset code: ${responseData.code}`;
-
-    sendEmail({
-      email: responseData.email,
-      subject: "Your password reset code (valid for 15 mins)",
-      message,
-      // html: html,
-    });
-
-    res.status(200).json({
-      status: "success",
-      code: responseData.code,
-      message: "Code sent to email",
-    });
+    forgotPassword(email, user, res);
   } catch (err) {
     res.status(500).json({ msg: "There was an error sending the code!" });
   }
 });
 
+// Management forgot password
+app.post("/forgot-password/management", async (req, res) => {
+  try {
+    // 1) Get user based on posted email
+    const { email, role } = req.body;
+    const user = await Management.findOne({ email, role });
+
+    // console.log(user);
+
+    if (!user) {
+      return req.status(404).json({
+        msg: "Manager does not exist!",
+      });
+    }
+
+    // handles sending and saving the verification to
+    forgotPassword(email, user, res);
+  } catch (err) {
+    res.status(500).json({ msg: "There was an error sending the code!" });
+  }
+});
+
+// User reset password
 app.patch("/reset-password", async (req, res) => {
   try {
     let { email, code, password } = req.body;
@@ -210,6 +236,48 @@ app.patch("/reset-password", async (req, res) => {
     } else {
       res.status(404).json({
         msg: "user does not exist!",
+      });
+    }
+  } catch (err) {
+    res.status(400).json({ err: err.message });
+  }
+});
+
+// Management reset password
+app.patch("/reset-password/management", async (req, res) => {
+  try {
+    let { email, code, password } = req.body;
+
+    let time;
+    let verify = await Verification.findOne({ email, code, is_active: true });
+
+    if (!verify) return res.json({ msg: "Invalid code was supplied." });
+    if (!verify.is_active) return res.json({ msg: "Code is already expired" });
+
+    time =
+      (Date.now() - new Date(verify.created_at).getTime()) / (1000 * 60 * 15);
+
+    if (time > 15) {
+      verify.is_active = false;
+      verify.save();
+      return res.json({ msg: "Code is already expired" });
+    }
+
+    // call the user and reset password
+    let manager = await Management.findOne({ email });
+    if (manager) {
+      verify.is_active = false;
+      verify.save();
+
+      manager.password = password;
+      manager.save();
+
+      res.json({
+        msg: "Password successfully updated!",
+      });
+    } else {
+      res.status(404).json({
+        msg: "Manager does not exist!",
       });
     }
   } catch (err) {
