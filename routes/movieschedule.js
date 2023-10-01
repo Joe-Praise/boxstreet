@@ -122,7 +122,7 @@ app.delete("/:id", async (req, res) => {
       //   .status(200)
       //   .send({ msg: "Movie schedule deleted successfully", code: 200 });
       await MovieSchedule.findByIdAndUpdate(movieschedule._id, {
-        active: false,
+        is_deleted: false,
       });
       res.status(200).json({ msg: "Movie schedule successfully deleted" });
     }
