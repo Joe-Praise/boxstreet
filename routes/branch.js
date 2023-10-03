@@ -86,14 +86,4 @@ app.delete("/:id", async (req, res) => {
   }
 });
 
-//Get all branches in a particular location
-app.get("/cinemabranches", async (req, res) => {
-  try{
-    const cinemaId = await Location.find().populate("location_id")
-    console.log(cinemaId)
-  } catch (err) {
-    res.status(500).json({ err: err.message });
-  }
-});
-
 module.exports = app;

@@ -1,3 +1,4 @@
+const Branch = require('../models/branch');
 let Location = require('../models/location');
 let express = require('express');
 let app = express.Router()
@@ -26,6 +27,23 @@ app.get('/:id', async (req, res) => {
         res.status(500).json({ err: err.message})
     }
 })
+
+//Get all branches in a particular location
+app.get("/:id/branches", async (req, res) => {
+    try{
+      const locationId = req.params.id;
+      const location  = await Location.findById(locationId);
+
+      if(!location) {
+        res.status(404).json({ message: "Location not found", code: 404});
+      } else {
+        const branches = await Branch.find({ location_id: locationId }).populate("cinema_id location_id");
+        res.json(branches);
+    }
+    } catch (err) {
+      res.status(500).json({ err: err.message });
+    }
+  });
 
 //create a new location
 app.post('/', async (req, res) => {
