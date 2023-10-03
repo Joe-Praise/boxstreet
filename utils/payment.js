@@ -38,16 +38,30 @@ const initiatePaymentService = async (req, res) => {
 
 const paystackWebhookService = async (payload) => {
   try {
-    const user = await Transaction.findOne({
+    const transaction = await Transaction.findOne({
       reference: payload.data.reference,
     });
+
+    const updateObj = {
+      ipAddress: payload.data.ip_address,
+      currency: payload.data.currency,
+      channel: payload.data.channel,
+      transactionId: payload.data.id,
+      status: payload.data.status,
+      paidAt: payload.data.paid_at,
+    };
+
+    const data = transaction._doc;
+    transaction.overwrite({ ...data, ...updateObj });
+    transaction.save();
 
     console.log(payload);
     console.log(user);
   } catch (err) {
-    return res.status(402).json({
-      err: "unable to get payment information",
-    });
+    // return res.status(402).json({
+    //   err: "unable to get payment information",
+    // });
+    console.log(err.message);
   }
 };
 
