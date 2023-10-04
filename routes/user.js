@@ -1,6 +1,8 @@
 const express = require("express");
 const User = require("../models/user");
+const Booking = require("../models/booking");
 const { Protect } = require("../middleware/auth");
+const { upload, handleUpload } = require("../utils/upload");
 let app = express.Router();
 
 const filterObj = (obj, ...allowedFields) => {
@@ -40,6 +42,35 @@ app.get("/:id", async (req, res) => {
   }
 });
 
+// get all movies a user has booked
+
+app.get("/:id/bookings", async (req, res) => {
+  try {
+    // 1) get the user from the database
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found", code: 404 });
+    }
+
+    // 2) get all bookings with the user's id present
+    const allBookings = await Booking.find({ user_id: id });
+    console.log(allBookings);
+
+    if (allBookings.length < 1) {
+      return res
+        .status(200)
+        .json({ msg: "No booking found for this user", code: 200 });
+    }
+    // 3) send the bookings as a response to the query
+    res.status(200).json({ status: "success", data: allBookings });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
+
 // Update a user by ID
 app.patch("/:id", Protect, async (req, res) => {
   try {
@@ -51,7 +82,7 @@ app.patch("/:id", Protect, async (req, res) => {
     }
 
     // 2) filter for unwanted field that are not allowed to be updated
-    const filteredBody = filterObj(req.body, "name", "email", "photo");
+    const filteredBody = filterObj(req.body, "name", "email");
 
     // 3) Update user document
     const updatedUser = await User.findByIdAndUpdate(
@@ -71,6 +102,33 @@ app.patch("/:id", Protect, async (req, res) => {
     res.status(200).json({ msg: "User updated", data: updatedUser });
   } catch (err) {
     res.status(500).json({ err: err.message });
+  }
+});
+
+// Upload image for user
+app.put("/:id/resources", upload.single("image"), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ msg: "The id supplied does not exist", code: 404 });
+    }
+
+    if (req.file) {
+      const b64 = Buffer.from(req.file.buffer).toString("base64");
+      let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+      const data = await handleUpload(dataURI);
+
+      user.image = data.url;
+      await user.save({ validateBeforeSave: false });
+      res.json({ msg: "Data saved", code: 200 });
+    }
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ err: "Server error has occurred" });
   }
 });
 

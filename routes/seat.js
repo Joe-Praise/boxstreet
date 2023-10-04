@@ -6,7 +6,7 @@ let app = express.Router();
 app.get("/", async (req, res) => {
   try {
     const seat = await Seat.find().populate(
-      "theather_id branch_id category_id"
+      "theater_id branch_id category_id cinema_id"
     );
     res.status(200).json({
       status: "success",
@@ -22,7 +22,7 @@ app.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const seat = await Seat.findById(id).populate(
-      "theather_id branch_id category_id"
+      "theater_id branch_id category_id"
     );
     if (!seat) {
       res.status(404).json({ msg: "Seat not found!", code: 404 });
@@ -82,7 +82,9 @@ app.delete("/:id", async (req, res) => {
     } else {
       // await seat.deleteOne();
       // res.status(200).send({ msg: "seat deleted successfully", code: 200 });
-      await Seat.findByIdAndUpdate(seat._id, { active: false });
+      await Seat.findByIdAndUpdate(seat._id, { is_deleted: true });
+      await seat.save();
+
       res.status(200).json({ msg: "Seat successfully deleted" });
     }
   } catch (err) {

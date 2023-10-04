@@ -2,6 +2,7 @@ const express = require('express');
 const app = express.Router();
 const Branch = require('../models/branch');
 const Cinema = require('../models/cinema');
+const Location = require('../models/location')
 
 
 // Get all branches
@@ -80,23 +81,6 @@ app.delete("/:id", async (req, res) => {
         await branch.deleteOne();
         res.status(200).send({msg: "Branch deleted successfully", code:200});
     }
-  } catch (err) {
-    res.status(500).json({ err: err.message });
-  }
-});
-
-//Get all branches in a particular branch
-app.get("/cinemabranches", async (req, res) => {
-  try{
-    const cinemaId = await Branch.find("cinema_id");
-    const cinemabranch = await Branch.find(cinemaId);
-
-    if(!cinemabranch) {
-      res.status(404).json({msg: "This cinema is not found", code: 404})
-    } else {
-      res.status(200).json(cinemabranch)
-    }
-
   } catch (err) {
     res.status(500).json({ err: err.message });
   }

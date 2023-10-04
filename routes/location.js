@@ -1,3 +1,4 @@
+const Branch = require('../models/branch');
 let Location = require('../models/location');
 let express = require('express');
 let app = express.Router()
@@ -27,6 +28,23 @@ app.get('/:id', async (req, res) => {
     }
 })
 
+//Get all branches in a particular location
+app.get("/:id/branches", async (req, res) => {
+    try{
+      const locationId = req.params.id;
+      const location  = await Location.findById(locationId);
+
+      if(!location) {
+        res.status(404).json({ message: "Location not found", code: 404});
+      } else {
+        const branches = await Branch.find({ location_id: locationId }).populate("cinema_id location_id");
+        res.json(branches);
+    }
+    } catch (err) {
+      res.status(500).json({ err: err.message });
+    }
+  });
+
 //create a new location
 app.post('/', async (req, res) => {
     try{
@@ -37,6 +55,24 @@ app.post('/', async (req, res) => {
 
         res.status(201).json(savedLocation);
     } catch {
+        res.status(500).json({ err: err.message })
+    }
+})
+
+//update a location
+app.put('/:id', async (req, res) => {
+    try{
+        const {id} = req.params;
+        const location = await Location.findById(id);
+    
+        if(!location) return res.status(404).json({msg: "Id does not exist", code:404 })
+        
+        let data = location._doc;
+        location.overwrite({...data, ...req.body})
+        location.save();
+  
+        res.send({msg:"Location updated", data:location})
+    } catch{
         res.status(500).json({ err: err.message })
     }
 })

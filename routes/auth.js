@@ -1,7 +1,6 @@
 const express = require("express");
-const fs = require("fs");
 const User = require("../models/user");
-const Cinema = require("../models/cinema");
+const Management = require("../models/management");
 const Verification = require("../models/verification");
 let app = express.Router();
 const jwt = require("jsonwebtoken");
@@ -45,6 +44,28 @@ const createSendToken = (user, statusCode, res) => {
   });
 };
 
+const forgotPassword = async (email, user, res) => {
+  const data = { email, cinema_id: user.cinema_id };
+
+  const response = await axios.post(VERIFICATION_URL, data);
+  const responseData = response.data;
+
+  const message = `Forgot your password? \nHere's reset code: ${responseData.code}`;
+
+  sendEmail({
+    email: responseData.email,
+    subject: "Your password reset code (valid for 15 mins)",
+    message,
+    // html: html,
+  });
+
+  res.status(200).json({
+    status: "success",
+    code: responseData.code,
+    message: "Code sent to email",
+  });
+};
+
 // Create a new user
 app.post("/signup", async (req, res) => {
   try {
@@ -61,7 +82,9 @@ app.post("/signup", async (req, res) => {
       cinema_id: userData.cinema_id,
     };
 
-    axios.post(VERIFICATION_URL, data);
+    const userVerifyInfo = await axios.post(VERIFICATION_URL, data);
+    const info = userVerifyInfo.data;
+    const message = `Did you just sign up with Box Street? \nHere's your verification code: ${info.code}`;
 
     const user = new User(userData);
     const savedUser = await user.save();
@@ -70,13 +93,19 @@ app.post("/signup", async (req, res) => {
     savedUser.password = undefined;
     savedUser.active = undefined;
 
+    sendEmail({
+      email: info.email,
+      subject: "User validation (valid for 15 mins)",
+      message,
+      // html: html,
+    });
+
     res.status(201).json({
       status: "success",
       data: {
         savedUser,
       },
     });
-    // createSendToken(savedUser, 201, res);
   } catch (err) {
     res.status(400).json({ err: err.message });
   }
@@ -105,98 +134,155 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// forgot password, password reset and update password
-
-app.post("/forgot-password", async (req, res) => {
-  // 1) Get user based on posted email
-
-  const { email } = req.body;
-  const user = await User.findOne({ email });
-
-  if (!user) {
-    req.status(404).json({
-      msg: "User does not exist!",
-    });
-  }
-
-  const data = { email, cinema_id: user.cinema_id };
-
-  const response = await axios.post(VERIFICATION_URL, data);
-  // const cinema
-  // console.log(response.data);
-  const message = `Forgot your password? \nHere's your code: ${response.data.code}`;
-
+app.post("/management-login", async (req, res) => {
   try {
-    sendEmail({
-      email: response.data.email,
-      subject: "Your password reset code (valid for 15 mins)",
-      message,
-      // html: html,
-    });
+    const { email, password } = req.body;
 
-    res.status(200).json({
-      status: "success",
-      code: response.data.code,
-      message: "Code sent to email",
-    });
-  } catch (err) {
-    // response.code = undefined;
-    // response.is_active = false;
-    // await response.save({ validateBeforeSave: false });
-    console.log(err.message);
-    // res.status(500).json({ msg: "There was an error sending the code!" });
-  }
-
-  // const user = await User.findOne(email);
-  // res.json({
-  //   data: {
-  //     user
-  //   },
-  // });
-  // 2) Generate random reset token
-});
-
-
-// update password
-app.post("/update-password", async (req, res) => {
-  try {
-    const { email, password, newPassword, code } = req.body;
-
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(404).json({
-        msg: "User does not exist!",
-      });
+    // 1) Check if email and password exists
+    if (!email || !password) {
+      return res.status(400).json({ msg: "Please provide email and password" });
     }
 
-    const verification = await Verification.findOne({ email, code });
+    // 2) Check if user exist && password is correct
+    const manager = await Management.findOne({ email }).select("+password");
 
-    if (!verification || !verification.is_active) {
-      return res.status(401).json({
-        msg: "Invalid or expired verification code",
-      });
+    if (
+      !manager ||
+      !(await manager.correctPassword(password, manager.password))
+    ) {
+      console.log(manager);
+      return res.status(401).json({ msg: "Incorrect email or password" });
     }
 
-    if (!(await user.correctPassword(password, user.password))) {
-      return res.status(401).json({ msg: "Incorrect password" });
-    }
-
-    user.password = newPassword;
-    await user.save();
-
-    verification.is_active = false;
-    await verification.save();
-
-    res.status(200).json({
-      status: "success",
-      message: "Password updated successfully",
-    });
+    createSendToken(manager, 200, res);
   } catch (err) {
     res.status(400).json({ msg: err.message });
   }
 });
 
+// user forgot password
+app.post("/forgot-password", async (req, res) => {
+  try {
+    // 1) Get user based on posted email
+    const { email } = req.body;
+    const user = await User.findOne({ email });
 
+    if (!user) {
+      return req.status(404).json({
+        msg: "User does not exist!",
+      });
+    }
+
+    forgotPassword(email, user, res);
+  } catch (err) {
+    res.status(500).json({ msg: "There was an error sending the code!" });
+  }
+});
+
+// Management forgot password
+app.post("/forgot-password/management", async (req, res) => {
+  try {
+    // 1) Get user based on posted email
+    const { email, role } = req.body;
+    const user = await Management.findOne({ email, role });
+
+    // console.log(user);
+
+    if (!user) {
+      return req.status(404).json({
+        msg: "Manager does not exist!",
+      });
+    }
+
+    // handles sending and saving the verification to
+    forgotPassword(email, user, res);
+  } catch (err) {
+    res.status(500).json({ msg: "There was an error sending the code!" });
+  }
+});
+
+// User reset password
+app.patch("/reset-password", async (req, res) => {
+  try {
+    let { email, code, password } = req.body;
+
+    let time;
+    let verify = await Verification.findOne({ email, code, is_active: true });
+
+    if (!verify) return res.json({ msg: "Invalid code was supplied." });
+    if (!verify.is_active) return res.json({ msg: "Code is already expired" });
+
+    time =
+      (Date.now() - new Date(verify.created_at).getTime()) / (1000 * 60 * 15);
+
+    if (time > 15) {
+      verify.is_active = false;
+      verify.save();
+      return res.json({ msg: "Code is already expired" });
+    }
+
+    // call the user and reset password
+    let user = await User.findOne({ email });
+    if (user) {
+      verify.is_active = false;
+      verify.save();
+
+      user.password = password;
+      user.save();
+
+      res.json({
+        msg: "Password successfully updated!",
+      });
+    } else {
+      res.status(404).json({
+        msg: "user does not exist!",
+      });
+    }
+  } catch (err) {
+    res.status(400).json({ err: err.message });
+  }
+});
+
+// Management reset password
+app.patch("/reset-password/management", async (req, res) => {
+  try {
+    let { email, code, password } = req.body;
+
+    let time;
+    let verify = await Verification.findOne({ email, code, is_active: true });
+
+    if (!verify) return res.json({ msg: "Invalid code was supplied." });
+    if (!verify.is_active) return res.json({ msg: "Code is already expired" });
+
+    time =
+      (Date.now() - new Date(verify.created_at).getTime()) / (1000 * 60 * 15);
+
+    if (time > 15) {
+      verify.is_active = false;
+      verify.save();
+      return res.json({ msg: "Code is already expired" });
+    }
+
+    // call the user and reset password
+    let manager = await Management.findOne({ email });
+    if (manager) {
+      verify.is_active = false;
+      verify.save();
+
+      manager.password = password;
+      manager.save();
+
+      res.json({
+        msg: "Password successfully updated!",
+      });
+    } else {
+      res.status(404).json({
+        msg: "Manager does not exist!",
+      });
+    }
+  } catch (err) {
+    res.status(400).json({ err: err.message });
+  }
+});
 
 module.exports = app;

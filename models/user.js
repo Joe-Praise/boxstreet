@@ -17,13 +17,13 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, "Please provide a password"],
-    minLength: [8, "password must be more or equal to 8  characters"], 
-    // select: false,
+    minLength: [8, "password must be more or equal to 8 characters"],
+    select: false,
   },
   active: { type: Boolean, default: true, select: false },
   is_verified: { type: Boolean, default: false },
   cinema_id: { type: String, required: true },
-  photo: { type: String },
+  image: { type: String },
   created_at: { type: Date, default: Date.now },
 });
 

@@ -20,6 +20,7 @@ const booking = require("./routes/booking");
 const management = require("./routes/management");
 const location = require("./routes/location");
 const auth = require("./routes/auth");
+const payment = require("./routes/transaction");
 
 let PORT = process.env.PORT;
 let MONGO_URL = process.env.MONGO_URL;
@@ -52,6 +53,7 @@ app.use("/api/v1/bookings", booking);
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/managements", management);
 app.use("/api/v1/locations", location);
+app.use("/api/v1/payments", payment);
 
 app.get("/", (req, res) => {
   res.json({

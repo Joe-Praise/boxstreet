@@ -1,22 +1,22 @@
 const mongoose = require("mongoose");
 
 const MovieSchema = new mongoose.Schema({
-  cinema_id: { type: String, ref: "cinemas" },
-  branch_id: { type: String, ref: "branches" },
-  name: { type: String, },
-  film_poster: { type: String, }, //image for the movie
-  trailer: { type: String },
-  description: { type: String, }, //synopsis for the movie
-  times_showed: { type: Number },
-  cast: { type: String, },
-  movie_director: { type: String, },
-  production_studio: { type: String,  },
-  genre: { type: String, },
-  duration: { type: String, },
-  language: { type: String, },
-  movie_rating: { type: String, },
-  pg_rating: { type: String, },
-  release_date: { type: String,},
+  cinema_id: { type: String, ref: "cinemas", required: true},
+  branch_id: { type: String, ref: "branches", required: true },
+  name: { type: String,required: true },
+  film_poster: { type: String,required: true }, //image for the movie
+  trailer: { type: String, required: true},
+  description: { type: String, required: true}, //synopsis for the movie
+  times_showed: { type: Number, required: true},
+  cast: { type: String, required: true},
+  movie_director: { type: String, required: true},
+  production_studio: { type: String, required: true },
+  genre: { type: String,required: true },
+  duration: { type: String, required: true},
+  language: { type: String,required: true },
+  movie_rating: { type: String, required: true},
+  pg_rating: { type: String, required: true},
+  release_date: { type: String,required: true},
   upload_date: { type: Date, default: Date.now },
   active: { type: Boolean },
 });

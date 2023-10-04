@@ -4,21 +4,29 @@ const BranchSchema = new mongoose.Schema({
   cinema_id: {
     type: String,
     ref: "cinemas",
+    required: true,
   },
 
-  location: {
+  location_id: {
     type: String,
+    ref:"locations", 
+    required: true,
   },
 
   opening: {
-    type: String,
+    type: String, 
+    required: true,
   },
 
   closing: {
-    type: String,
+    type: String, 
+    required: true,
   },
 
-  phones: {type:Array},
+  phones: {
+    type:Array,
+    required: true,
+  },
 });
 
 const Branch = mongoose.model("branches", BranchSchema);
