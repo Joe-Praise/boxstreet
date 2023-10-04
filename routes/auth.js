@@ -156,4 +156,47 @@ app.post("/forgot-password", async (req, res) => {
   // 2) Generate random reset token
 });
 
+
+// update password
+app.post("/update-password", async (req, res) => {
+  try {
+    const { email, password, newPassword, code } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        msg: "User does not exist!",
+      });
+    }
+
+    const verification = await Verification.findOne({ email, code });
+
+    if (!verification || !verification.is_active) {
+      return res.status(401).json({
+        msg: "Invalid or expired verification code",
+      });
+    }
+
+    if (!(await user.correctPassword(password, user.password))) {
+      return res.status(401).json({ msg: "Incorrect password" });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    verification.is_active = false;
+    await verification.save();
+
+    res.status(200).json({
+      status: "success",
+      message: "Password updated successfully",
+    });
+  } catch (err) {
+    res.status(400).json({ msg: err.message });
+  }
+});
+
+
+
 module.exports = app;

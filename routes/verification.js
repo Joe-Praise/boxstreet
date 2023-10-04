@@ -55,12 +55,12 @@ app.post("/verify", async (req, res) => {
     let { email, code } = req.body;
     let time;
     let verify = await Verification.findOne({ email, code, is_active: true });
-    console.log(verify);
+
     if (!verify) return res.json({ msg: "Invalid code was supplied." });
     if (!verify.is_active) return res.json({ msg: "Code is already expired" });
 
     time =
-      ((Date.now() - new Date(verify.created_at).getTime()) / 1000) * 60 * 15;
+      (Date.now() - new Date(verify.created_at).getTime()) / (1000 * 60 * 15);
 
     if (time > 15) {
       verify.is_active = false;
