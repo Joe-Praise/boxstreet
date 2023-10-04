@@ -9,6 +9,7 @@ let app = express.Router();
 
 app.post("/initiate-payment", Protect, initiatePaymentService);
 
+// TODO: this route is not authomatically called by paystack test webhook url
 app.post("/webhook", paystackWebhookService);
 
 app.get("/", async (req, res) => {
