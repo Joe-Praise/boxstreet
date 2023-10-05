@@ -1,23 +1,37 @@
 const express = require("express");
 const MovieSchedule = require("../models/movie_schedule");
+// const Movie = require("../models/movie");
+// const Cinema = require("../models/cinema")
 const { upload, handleUpload } = require("../utils/upload");
 let app = express.Router();
 
 // Get all movie schedule
 app.get("/", async (req, res) => {
+  let movieschedule = [];
   try {
-    const movieschedule = await MovieSchedule.find().populate(
-      "branch_id cinema_id"
-    );
-
-    console.log(movieschedule);
-    res.status(200).json({
-      status: "success",
-      data: movieschedule,
-    });
+    const { movie_id, cinema_id } = req.query;
+    if (movie_id) {
+      movieschedule = await MovieSchedule.find({ movie_id });
+    } else if (cinema_id) {
+      movieschedule = await MovieSchedule.find({ cinema_id });
+    } else {
+      movieschedule = await MovieSchedule.find({ cinema_id, movie_id });
+    }
+    // console.log(movie, cinema);
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
+
+  if (!movieschedule.length) {
+    return res.status(200).json({
+      status: "movie is not scheduled for this cimena!",
+      data: movieschedule,
+    });
+  }
+  return res.status(200).json({
+    status: "success",
+    data: movieschedule,
+  });
 });
 
 // get movie schedule by ID
