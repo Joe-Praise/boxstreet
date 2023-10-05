@@ -11,13 +11,19 @@ app.get("/", async (req, res) => {
   try {
     const { movie_id, cinema_id } = req.query;
     if (movie_id) {
-      movieschedule = await MovieSchedule.find({ movie_id });
+      movieschedule = await MovieSchedule.find({ movie_id }).populate(
+        "branch_id cinema_id movie_id"
+      );
     } else if (cinema_id) {
-      movieschedule = await MovieSchedule.find({ cinema_id });
+      movieschedule = await MovieSchedule.find({ cinema_id }).populate(
+        "branch_id cinema_id movie_id"
+      );
     } else {
-      movieschedule = await MovieSchedule.find({ cinema_id, movie_id });
+      movieschedule = await MovieSchedule.find({
+        cinema_id,
+        movie_id,
+      }).populate("branch_id cinema_id movie_id");
     }
-    // console.log(movie, cinema);
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
