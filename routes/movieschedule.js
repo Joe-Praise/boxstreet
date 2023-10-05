@@ -90,7 +90,9 @@ app.put("/:id", async (req, res) => {
     movieschedule.overwrite({ ...data, ...req.body });
     movieschedule.save();
 
-    res.send({ msg: "Movie schedule details updated", data: movieschedule });
+    res
+      .status(500)
+      .json({ msg: "Movie schedule details updated", data: movieschedule });
   } catch (err) {
     res.status(500).json({ err: err.message });
   }

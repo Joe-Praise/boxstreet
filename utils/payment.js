@@ -1,6 +1,7 @@
 const axios = require("axios");
 const Transaction = require("../models/transaction");
 const codeGenerator = require("./codeGenerator");
+require("dotenv").config();
 
 const initiatePaymentService = async (req, res) => {
   try {
@@ -14,6 +15,7 @@ const initiatePaymentService = async (req, res) => {
     const body = {
       amount: Number(req.body.amount) * 100,
       email: req.user.email,
+      user_id: req.user._id,
       reference: "BS-TF" + codeGenerator(10),
     };
 

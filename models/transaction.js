@@ -17,9 +17,9 @@ const TransactionSchema = new mongoose.Schema({
   reference: {
     type: String,
   },
-  user: {
+  user_id: {
     type: mongoose.Types.ObjectId,
-    ref: "User",
+    ref: "users",
   },
   ipAddress: {
     type: String,
@@ -35,6 +35,9 @@ const TransactionSchema = new mongoose.Schema({
   },
   paidAt: {
     type: Date,
+  },
+  message: {
+    type: String,
   },
 });
 

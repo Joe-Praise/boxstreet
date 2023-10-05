@@ -2,72 +2,47 @@ const express = require("express");
 const Transaction = require("../models/transaction");
 const { Protect } = require("../middleware/auth");
 const axios = require("axios");
-const {
-  initiatePaymentService,
-  paystackWebhookService,
-} = require("../utils/payment");
+const { initiatePaymentService } = require("../utils/payment");
 let app = express.Router();
 require("dotenv").config();
 
 app.post("/initiate-payment", Protect, initiatePaymentService);
 
-// TODO: this route is not authomatically called by paystack test webhook url
-// app.post("/webhook", paystackWebhookService);
-
 app.get("/getstatus", async (req, res) => {
   try {
     let { reference } = req.query;
-    reference = "BS-TF3617371821";
-    // res.send();
+
     const transaction = await Transaction.findOne({
       reference,
     });
 
-    console.log(reference, process.env.PAYSTACK_API_KEY);
+    let url = process.env.PAYSTACK_GETSTATUS_URL + `${reference}`;
 
-    // const instance = axios.create({
-    //   baseURL: process.env.PAYSTACK_GETSTATUS_HOSTNAME,
-    //   headers: {
-    //     Authorization: `Bearer ${process.env.PAYSTACK_API_KEY}`,
-    //   },
-    // });
-    // const response = await instance.get(
-    //   process.env.PAYSTACK_GETSTATUS_PATH + `${reference}`
-    // );
-    // ("api.paystack.co");
-    // ("/transaction/verify/");
-    // let url = "https://api.paystack.co/transaction";
-    let url = "https://api.paystack.co/transaction/verify/" + `${reference}`;
-    console.log(url);
     const response = await axios.get(url, {
       headers: {
         Authorization: `Bearer ${process.env.PAYSTACK_API_KEY}`,
       },
     });
-    const data = response.data;
 
-    res.json(data);
-    // const updateObj = {
-    //   ipAddress: data.ip_address,
-    //   currency: data.currency,
-    //   channel: data.channel,
-    //   transactionId: data.id,
-    //   status: data.status,
-    //   paidAt: data.paid_at,
-    // };
-    // console.log(updateObj);
-    // const data = transaction._doc;
-    // transaction.overwrite({ ...data, ...updateObj });
-    // transaction.save();
+    const payload = response.data;
 
-    // console.log(req.body.data);
-    // res.status(200).json({
-    //   status: "success",
-    //   data: {
-    //     data,
-    //   },
-    // });
-    // console.log(user);
+    const updateObj = {
+      ipAddress: payload.data.ip_address,
+      currency: payload.data.currency,
+      channel: payload.data.channel,
+      transactionId: payload.data.id,
+      status: payload.data.status,
+      paidAt: payload.data.paid_at,
+      message: payload.data.message,
+    };
+
+    const data = transaction._doc;
+    transaction.overwrite({ ...data, ...updateObj });
+    transaction.save();
+
+    res.status(200).json({
+      status: "success",
+    });
   } catch (err) {
     return res.status(402).json({
       err: "unable to get payment information",
@@ -77,11 +52,36 @@ app.get("/getstatus", async (req, res) => {
 
 app.get("/", async (req, res) => {
   try {
-    const transactions = await Transaction.find();
+    const transactions = await Transaction.find().populate("user_id");
     res.status(200).json({
       status: "success",
       data: {
         transactions,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
+
+app.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const payment = await Transaction.findById(id);
+
+    if (!payment)
+      return res
+        .status(404)
+        .json({ msg: "The id supplied does not exist", code: 404 });
+
+    let data = payment._doc;
+    payment.overwrite({ ...data, ...req.body });
+    payment.save();
+
+    res.status(500).json({
+      msg: "Payment updated!",
+      data: {
+        payment,
       },
     });
   } catch (err) {

@@ -1,7 +1,7 @@
-const crypto = require("crypto");
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+require("dotenv").config();
 
 exports.Protect = async (req, res, next) => {
   // 1) Getting token and check if it's there

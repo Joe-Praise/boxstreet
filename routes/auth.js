@@ -20,6 +20,9 @@ const VERIFICATION_URL =
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
+  if (!token) {
+    res.status(400).json({ msg: "could not sign jwt" });
+  }
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
@@ -124,7 +127,6 @@ app.post("/login", async (req, res) => {
     const user = await User.findOne({ email }).select("+password");
 
     if (!user || !(await user.correctPassword(password, user.password))) {
-      console.log(user);
       return res.status(401).json({ msg: "Incorrect email or password" });
     }
 
