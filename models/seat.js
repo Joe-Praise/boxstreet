@@ -11,6 +11,7 @@ const SeatSchema = new mongoose.Schema({
     required: true,
     ref: "categories",
   },
+  position: { type: String, enum: ["LEFT", "RIGHT"] },
   seat_number: { type: String, required: true },
   is_booked: { type: Boolean, default: false },
   is_deleted: { type: Boolean, default: false, select: false },
