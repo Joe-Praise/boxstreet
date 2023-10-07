@@ -4,7 +4,7 @@ const MovieScheduleSchema = new mongoose.Schema({
   movie_id: { type: String, required: true, ref: "movies" },
   cinema_id: { type: String, required: true, ref: "cinemas" },
   branch_id: { type: String, required: true, ref: "branches" },
-  show_time: { type: Array, required: true },
+  show_time: { type: [String], required: true },
   image: { type: String, required: true },
   price: { type: Number, required: true },
   active: { type: Boolean, default: true },

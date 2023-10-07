@@ -7,11 +7,36 @@ app.get("/", async (req, res) => {
   try {
     const movie = await Movie.find();
     res.status(200).json({
-        status: "success",
-        data: movie,
+      status: "success",
+      data: movie,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/doublemovie", async (req, res) => {
+  try {
+    const movies = await Movie.find();
+
+    if (!movies) {
+      return res.status(404).json({ message: "Movie not Found", code: 404 });
+    }
+
+    const categories = {};
+    const doubleOfEachCategoryMovies = [];
+    for (let i = 0; i < movies.length; i++) {
+      if (categories[movies[i].cinema_id] === 2) continue;
+      categories[movies[i].cinema_id] =
+        (categories[movies[i].cinema_id] || 0) + 1;
+      doubleOfEachCategoryMovies.push(movies[i]);
+    }
+    res.status(200).json({
+      status: "success",
+      data: [...doubleOfEachCategoryMovies],
+    });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
   }
 });
 
@@ -40,8 +65,8 @@ app.post("/", async (req, res) => {
     const savedMovie = await movie.save();
 
     res.status(201).json({
-        status: "success",
-        data: savedMovie,
+      status: "success",
+      data: savedMovie,
     });
   } catch (err) {
     res.status(400).json({ err: err.message });
@@ -75,7 +100,9 @@ app.put("/:id/resources", async (req, res) => {
     const movie = await movie.findById(id);
 
     if (!movie)
-      return res.status(404).json({ msg: "The id supplied does not exist", code: 404 });
+      return res
+        .status(404)
+        .json({ msg: "The id supplied does not exist", code: 404 });
 
     res.send({ msg: "Movie updated", data: movie });
   } catch (err) {

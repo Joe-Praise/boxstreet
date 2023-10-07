@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const MovieSchema = new mongoose.Schema({
   cinema_id: { type: String, ref: "cinemas", required: true},
   branch_id: { type: String, ref: "branches", required: true },
+  location_id: {type: String, ref: "locations", required: true},
   name: { type: String,required: true },
   film_poster: { type: String,required: true }, //image for the movie
   trailer: { type: String, required: true},

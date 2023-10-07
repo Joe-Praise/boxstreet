@@ -47,6 +47,33 @@ app.get("/:id/seats", async (req, res) => {
   }
 });
 
+app.get("/:id/seats-summary", async (req, res) => {
+  try {
+    const theaterId = req.params.id;
+    const theater = await Theater.findById(theaterId);
+
+    if (!theater) {
+      res.status(404).json({ message: "Theater not found", code: 404 });
+    } else {
+      let seats = await Seat.find().populate("category_id");
+      const col_matrix_1 = [];
+      const col_matrix_2 = [];
+
+      for (let i = 0; i < seats.length; i++) {
+        seats[i].position === "LEFT"
+          ? col_matrix_1.push(seats[i])
+          : col_matrix_2.push(seats[i]);
+      }
+
+      res.json({
+        col_matrix_1,
+        col_matrix_2,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
 // Create a new theater
 app.post("/", async (req, res) => {
   try {
