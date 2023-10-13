@@ -13,10 +13,10 @@ const signToken = (id) =>
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
-const VERIFICATION_URL = "http://localhost:5000/api/v1/verifications";
-// process.env.MODE == "PROD"
-//   ? "https://boxstreet.onrender.com/api/v1/verifications"
-//   : "http://localhost:5000/api/v1/verifications";
+const VERIFICATION_URL =
+  process.env.MODE == "PROD"
+    ? "https://boxstreet.onrender.com/api/v1/verifications"
+    : "http://localhost:5000/api/v1/verifications";
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
