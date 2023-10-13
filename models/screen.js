@@ -6,7 +6,7 @@ const ScreenSchema = new mongoose.Schema({
   cinema_id: { type: String, required: true, ref: "cinemas" },
   date_created: { type: Date, default: Date.now },
   status: { type: String, enum: ["Working", "Faulty"], required: true },
-  active: { type: Boolean }, //ask about this!!!!!
+  active: { type: Boolean },
 });
 
 const Screen = mongoose.model("screens", ScreenSchema);
