@@ -9,7 +9,7 @@ let app = express.Router();
 app.get("/", async (req, res) => {
   let movieschedule = [];
   try {
-    const { movie_id, cinema_id } = req.query;
+    const { movie_id, cinema_id, branch_id } = req.query;
     if (movie_id) {
       movieschedule = await MovieSchedule.find({ movie_id }).populate(
         "branch_id cinema_id movie_id"
@@ -18,7 +18,11 @@ app.get("/", async (req, res) => {
       movieschedule = await MovieSchedule.find({ cinema_id }).populate(
         "branch_id cinema_id movie_id"
       );
-    } else {
+    } else if (branch_id) {
+      movieschedule = await MovieSchedule.find({ branch_id }).populate(
+        "branch_id cinema_id movie_id"
+      );
+    }else {
       movieschedule = await MovieSchedule.find({
         cinema_id,
         movie_id,
