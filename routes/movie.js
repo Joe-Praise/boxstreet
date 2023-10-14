@@ -113,7 +113,7 @@ app.put("/:id/resources", upload.single("image"), async (req, res) => {
       let dataURL = "data:" + req.file.mimetype + ";base64," + b64;
       const data = await handleUpload(dataURL);
 
-      movie.film_poster = data.url;
+      movie.image = data.url;
       await movie.save();
       res.json({ msg: "Data saved", code: 200 })
     } else {
