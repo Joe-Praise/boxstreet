@@ -110,7 +110,7 @@ app.put("/:id/resources", upload.single("image"), async (req, res) => {
 
     if (req.file) {
       const b64 = Buffer.from(req.file.buffer).toString("base64");
-      let dataURL = "data:" + req.file.mimetype + ";base64" + b64;
+      let dataURL = "data:" + req.file.mimetype + ";base64," + b64;
       const data = await handleUpload(dataURL);
 
       movie.film_poster = data.url;
