@@ -5,7 +5,7 @@ const MovieSchema = new mongoose.Schema({
   branch_id: { type: String, ref: "branches", required: true },
   location_id: {type: String, ref: "locations", required: true},
   name: { type: String,required: true },
-  film_poster: { type: String,required: true }, //image for the movie
+  film_poster: { type: String}, //image for the movie
   trailer: { type: String, required: true},
   description: { type: String, required: true}, //synopsis for the movie
   times_showed: { type: Number, required: true},

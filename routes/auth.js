@@ -5,7 +5,7 @@ const Verification = require("../models/verification");
 let app = express.Router();
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
-const sendEmail = require("../utils/email");
+const Email = require("../utils/email");
 require("dotenv").config();
 
 const signToken = (id) =>
@@ -53,14 +53,11 @@ const forgotPassword = async (email, user, res) => {
   const response = await axios.post(VERIFICATION_URL, data);
   const responseData = response.data;
 
-  const message = `Forgot your password? \nHere's reset code: ${responseData.code}`;
+  // Remove password from the output
+  user.password = undefined;
+  user.active = undefined;
 
-  sendEmail({
-    email: responseData.email,
-    subject: "Your password reset code (valid for 15 mins)",
-    message,
-    // html: html,
-  });
+  await new Email(user, responseData.code).sendForgotPassword();
 
   res.status(200).json({
     status: "success",
@@ -86,22 +83,18 @@ app.post("/signup", async (req, res) => {
   
     const userVerifyInfo = await axios.post(VERIFICATION_URL, data);
     const info = userVerifyInfo.data;
-    const message = `Did you just sign up with Box Street? \nHere's your verification code: ${info.code}`;
+    // const message = `Did you just sign up with Box Street? \nHere's your verification code: ${info.code}`;
 
 
     const user = new User(userData);
     const savedUser = await user.save();
+    // console.log(savedUser, info.code);
 
     // Remove password from the output
     savedUser.password = undefined;
     savedUser.active = undefined;
 
-    sendEmail({
-      email: info.email,
-      subject: "User validation (valid for 15 mins)",
-      message,
-      // html: html,
-    });
+    await new Email(savedUser, info.code).sendSignupVerification();
 
     res.status(201).json({
       status: "success",
