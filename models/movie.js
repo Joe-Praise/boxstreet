@@ -18,6 +18,7 @@ const MovieSchema = new mongoose.Schema({
   movie_rating: { type: String, required: true},
   pg_rating: { type: String, required: true},
   release_date: { type: String,required: true},
+  coming_soon: {type: Boolean},
   upload_date: { type: Date, default: Date.now },
   active: { type: Boolean },
 });
