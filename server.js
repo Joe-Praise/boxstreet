@@ -41,12 +41,12 @@ app.use(express.urlencoded({ extended: true }));
 // app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
-app.get("/", (req, res) => {
-  // res.json({
-  //   msg: "Api is running",
-  // });
-  res.status(200).render("activate");
-});
+// app.get("/", (req, res) => {
+//   // res.json({
+//   //   msg: "Api is running",
+//   // });
+//   res.status(200).render("activate");
+// });
 app.use("/api/v1/cinemas", cinema);
 app.use("/api/v1/users", user);
 app.use("/api/v1/branches", branch);
