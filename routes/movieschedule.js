@@ -26,6 +26,7 @@ app.get("/", async (req, res) => {
       movieschedule = await MovieSchedule.find({
         cinema_id,
         movie_id,
+        branch_id
       }).populate("branch_id cinema_id movie_id");
     }
   } catch (err) {
