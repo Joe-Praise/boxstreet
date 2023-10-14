@@ -97,7 +97,7 @@ app.put("/:id", async (req, res) => {
 });
 
 //updated a movie poster
-app.put("/:id/resources", upload.single("film_poster"), async (req, res) => {
+app.put("/:id/resources", upload.single("image"), async (req, res) => {
   try {
     const { id } = req.params;
     const movie = await Movie.findById(id);
