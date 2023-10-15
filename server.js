@@ -22,6 +22,7 @@ const management = require("./routes/management");
 const location = require("./routes/location");
 const auth = require("./routes/auth");
 const payment = require("./routes/transaction");
+const genre = require("./routes/genre");
 
 let PORT = process.env.PORT;
 let MONGO_URL = process.env.MONGO_URL;
@@ -64,6 +65,7 @@ app.use("/api/v1/auth", auth);
 app.use("/api/v1/managements", management);
 app.use("/api/v1/locations", location);
 app.use("/api/v1/payments", payment);
+app.use("/api/v1/genres", genre);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
