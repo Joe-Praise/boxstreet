@@ -7,7 +7,12 @@ const Seat = require("../models/seat");
 // Get all theaters
 app.get("/", async (req, res) => {
   try {
-    let theaters = await Theater.find().populate("branch_id");
+    let {branch_id} = req.query;
+    let theaters;
+
+    if(branch_id) theaters = await Theater.find({branch_id}).populate("branch_id");
+    else theaters = await Theater.find().populate("branch_id");
+    
     res.json(theaters);
   } catch (e) {
     console.error(e);

@@ -50,7 +50,7 @@ app.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const movieschedule = await MovieSchedule.findById(id).populate(
-      "branch_id cinema_id"
+      "branch_id cinema_id movie_id"
     );
     if (!movieschedule) {
       res.status(404).json({ msg: "Movie schedule not found", code: 404 });
