@@ -23,11 +23,17 @@ app.get("/", async (req, res) => {
   let { branch_id, cinema_id, theater_id } = req.query;
   try {
     if (branch_id)
-      bookings = await Booking.find({ branch_id }).select("-password");
+      bookings = await Booking.find({ branch_id }).populate(
+        "branch_id cinema_id movie_id"
+        );
     else if (cinema_id)
-      bookings = await Booking.find({ cinema_id }).select("-password");
+      bookings = await Booking.find({ cinema_id }).populate(
+        "branch_id cinema_id movie_id"
+        );
     else if (theater_id)
-      bookings = await Booking.find({ theater_id }).select("-password");
+      bookings = await Booking.find({ theater_id }).populate(
+        "branch_id cinema_id movie_id"
+        );
     else
       bookings = await Booking.find({
         cinema_id,
