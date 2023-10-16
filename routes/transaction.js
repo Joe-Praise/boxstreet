@@ -6,7 +6,7 @@ const { initiatePaymentService } = require("../utils/payment");
 let app = express.Router();
 require("dotenv").config();
 
-app.post("/initiate-payment", Protect, initiatePaymentService);
+app.post("/initiate-payment", initiatePaymentService);
 
 app.get("/getstatus", async (req, res) => {
   try {
