@@ -11,23 +11,25 @@ app.get("/", async (req, res) => {
   try {
     const { movie_id, cinema_id, branch_id } = req.query;
     if (movie_id) {
-      movieschedule = await MovieSchedule.find({ movie_id }).populate(
-        "branch_id cinema_id movie_id"
-      );
+      movieschedule = await MovieSchedule.find({ movie_id })
+        .select("-active")
+        .populate("branch_id cinema_id movie_id");
     } else if (cinema_id) {
-      movieschedule = await MovieSchedule.find({ cinema_id }).populate(
-        "branch_id cinema_id movie_id"
-      );
+      movieschedule = await MovieSchedule.find({ cinema_id })
+        .select("-active")
+        .populate("branch_id cinema_id movie_id");
     } else if (branch_id) {
-      movieschedule = await MovieSchedule.find({ branch_id }).populate(
-        "branch_id cinema_id movie_id"
-      );
-    }else {
+      movieschedule = await MovieSchedule.find({ branch_id })
+        .select("-active")
+        .populate("branch_id cinema_id movie_id");
+    } else {
       movieschedule = await MovieSchedule.find({
         cinema_id,
         movie_id,
-        branch_id
-      }).populate("branch_id cinema_id movie_id");
+        branch_id,
+      })
+        .select("-active")
+        .populate("branch_id cinema_id movie_id");
     }
   } catch (err) {
     res.status(500).json({ err: err.message });
@@ -49,9 +51,9 @@ app.get("/", async (req, res) => {
 app.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const movieschedule = await MovieSchedule.findById(id).populate(
-      "branch_id cinema_id movie_id"
-    );
+    const movieschedule = await MovieSchedule.findById(id)
+      .select("-active")
+      .populate("branch_id cinema_id movie_id");
     if (!movieschedule) {
       res.status(404).json({ msg: "Movie schedule not found", code: 404 });
     } else {

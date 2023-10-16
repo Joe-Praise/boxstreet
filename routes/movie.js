@@ -19,7 +19,9 @@ app.get("/", async (req, res) => {
 
 app.get("/doublemovie", async (req, res) => {
   try {
-    const movies = await Movie.find();
+    const movies = await Movie.find()
+      .select("-active")
+      .populate("branch_id cinema_id");
 
     if (!movies) {
       return res.status(404).json({ message: "Movie not Found", code: 404 });
