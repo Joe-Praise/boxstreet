@@ -24,15 +24,15 @@ app.get("/", async (req, res) => {
   try {
     if (branch_id)
       bookings = await Booking.find({ branch_id }).populate(
-        "branch_id cinema_id movie_id schedule_id"
+        "branch_id cinema_id movie_id"
         );
     else if (cinema_id)
       bookings = await Booking.find({ cinema_id }).populate(
-        "branch_id cinema_id movie_id schedule_id"
+        "branch_id cinema_id movie_id"
         );
     else if (theater_id)
       bookings = await Booking.find({ theater_id }).populate(
-        "branch_id cinema_id movie_id schedule_id"
+        "branch_id cinema_id movie_id"
         );
     else
       bookings = await Booking.find({
