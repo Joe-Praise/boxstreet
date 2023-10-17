@@ -39,7 +39,7 @@ app.get("/:id", async (req, res) => {
 });
 
 // create a manager
-app.post("/", async (req, res) => {
+app.post("/register", async (req, res) => {
   try {
     const newUser = new Management({
       fullname: req.body.fullname,
