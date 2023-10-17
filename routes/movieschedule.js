@@ -22,7 +22,7 @@ app.get("/", async (req, res) => {
       movieschedule = await MovieSchedule.find({ branch_id })
         .select("-active")
         .populate("branch_id cinema_id movie_id");
-    } else {
+    } else if ((cinema_id, movie_id, branch_id)) {
       movieschedule = await MovieSchedule.find({
         cinema_id,
         movie_id,
@@ -30,21 +30,81 @@ app.get("/", async (req, res) => {
       })
         .select("-active")
         .populate("branch_id cinema_id movie_id");
+    } else {
+      movieschedule = await MovieSchedule.find()
+        .select("-active")
+        .populate("branch_id cinema_id movie_id");
     }
+
+    if (!movieschedule.length) {
+      return res.status(200).json({
+        status: "movie is not scheduled for this cimena!",
+        data: movieschedule,
+      });
+    }
+    return res.status(200).json({
+      status: "success",
+      data: movieschedule,
+    });
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
+});
 
-  if (!movieschedule.length) {
+app.get("/search", async (req, res) => {
+  let movieschedule = [];
+  let filteredSchedules = [];
+  try {
+    const { name, cinema_id, branch_id } = req.query;
+    // if (movie_id) {
+    //   movieschedule = await MovieSchedule.find({ movie_id })
+    //     .select("-active")
+    //     .populate("branch_id cinema_id movie_id");
+    // } else if (cinema_id) {
+    //   movieschedule = await MovieSchedule.find({ cinema_id })
+    //     .select("-active")
+    //     .populate("branch_id cinema_id movie_id");
+    // } else if (branch_id) {
+    //   movieschedule = await MovieSchedule.find({ branch_id })
+    //     .select("-active")
+    //     .populate("branch_id cinema_id movie_id");
+    // } else if ((cinema_id, movie_id, branch_id)) {
+    //   movieschedule = await MovieSchedule.find({
+    //     cinema_id,
+    //     movie_id,
+    //     branch_id,
+    //   })
+    //     .select("-active")
+    //     .populate("branch_id cinema_id movie_id");
+    // } else {
+    //   movieschedule = await MovieSchedule.find()
+    //     .select("-active")
+    //     .populate("branch_id cinema_id movie_id");
+    // }
+
+    // if (!movieschedule.length) {
+    //   return res.status(200).json({
+    //     status: "movie is not scheduled for this cimena!",
+    //     data: movieschedule,
+    //   });
+    // }
+    if (name && cinema_id && branch_id) {
+      movieschedule = await MovieSchedule.find({
+        cinema_id,
+        branch_id,
+      }).populate("movie_id");
+
+      filteredSchedules = movieschedule.map((el) => el.movie_id.name === name);
+      console.log(filteredSchedules);
+    }
+
     return res.status(200).json({
-      status: "movie is not scheduled for this cimena!",
+      status: "success",
       data: movieschedule,
     });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
   }
-  return res.status(200).json({
-    status: "success",
-    data: movieschedule,
-  });
 });
 
 // get movie schedule by ID

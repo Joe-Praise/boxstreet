@@ -6,25 +6,69 @@ require("dotenv").config();
 
 //get all movies
 app.get("/", async (req, res) => {
+  let movies = [];
   try {
-    const movie = await Movie.find();
-    res.status(200).json({
+    const { cinema_id, branch_id } = req.query;
+    if (cinema_id) {
+      movies = await Movie.find({ cinema_id })
+        .select("-active")
+        .populate("branch_id cinema_id location_id");
+    } else if (branch_id) {
+      movies = await Movie.find({ branch_id })
+        .select("-active")
+        .populate("branch_id cinema_id location_id");
+    } else if (cinema_id && branch_id) {
+      movies = await Movie.find({
+        cinema_id,
+        branch_id,
+      })
+        .select("-active")
+        .populate("branch_id cinema_id location_id");
+    } else {
+      movies = await Movie.find()
+        .select("-active")
+        .populate("branch_id cinema_id location_id");
+    }
+
+    if (!movies.length) {
+      return res.status(200).json({
+        status: "movie is not scheduled for this cimena!",
+        data: movies,
+      });
+    }
+    return res.status(200).json({
       status: "success",
-      data: movie,
+      length: movies.length,
+      data: movies,
     });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
   }
 });
 
 app.get("/doublemovie", async (req, res) => {
+  let movies = [];
   try {
-    const movies = await Movie.find()
-      .select("-active")
-      .populate("branch_id cinema_id");
-
-    if (!movies) {
-      return res.status(404).json({ message: "Movie not Found", code: 404 });
+    const { cinema_id, branch_id } = req.query;
+    if (cinema_id) {
+      movies = await Movie.find({ cinema_id })
+        .select("-active")
+        .populate("branch_id cinema_id location_id");
+    } else if (branch_id) {
+      movies = await Movie.find({ branch_id })
+        .select("-active")
+        .populate("branch_id cinema_id location_id");
+    } else if (cinema_id && branch_id) {
+      movies = await Movie.find({
+        cinema_id,
+        branch_id,
+      })
+        .select("-active")
+        .populate("branch_id cinema_id location_id");
+    } else {
+      movies = await Movie.find()
+        .select("-active")
+        .populate("branch_id cinema_id location_id");
     }
 
     const categories = {};

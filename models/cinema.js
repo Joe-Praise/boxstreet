@@ -21,7 +21,7 @@ const CinemaSchema = new mongoose.Schema(
     },
     is_deleted: {
       type: Boolean,
-      default:false
+      default: false,
     },
   },
   { timestamps: true }
