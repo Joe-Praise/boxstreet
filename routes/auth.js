@@ -80,10 +80,11 @@ app.post("/signup", async (req, res) => {
       email: userData.email,
       cinema_id: userData.cinema_id,
     };
-
+  
     const userVerifyInfo = await axios.post(VERIFICATION_URL, data);
     const info = userVerifyInfo.data;
     // const message = `Did you just sign up with Box Street? \nHere's your verification code: ${info.code}`;
+
 
     const user = new User(userData);
     const savedUser = await user.save();

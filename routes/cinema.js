@@ -119,7 +119,7 @@ app.put("/:id/resources", upload.single("image"), async (req, res) => {
         msg: "Cinema cannot be saved without any image",
         code: 400,
       });
-    }
+    }z
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ err: "Server error has occurred" });
