@@ -66,7 +66,7 @@ app.get("/:id", async (req, res) => {
 // get a single booking
 app.get("/:id/ticket-no", async (req, res) => {
   let booking;
-  let ticket_no = req.params.id;
+  let ticket_no = req.params.id.toLowerCase();
   try {
     booking = await Booking.findOne({ ticket_no });
   } catch (err) {

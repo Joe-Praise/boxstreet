@@ -80,6 +80,7 @@ app.get("/:id/seats-summary", async (req, res) => {
         col_matrix_1,
         col_matrix_2,
       });
+      
     }
   } catch (err) {
     res.status(500).json({ err: err.message });

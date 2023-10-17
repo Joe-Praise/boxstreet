@@ -71,7 +71,8 @@ const BookingSchema = new mongoose.Schema({
     },
     ticket_no: {
         type: String,
-        required:true
+        required:true,
+        lowercase:true
     },
     is_checked: {
         type: Boolean,
