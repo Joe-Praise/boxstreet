@@ -65,7 +65,7 @@ app.get("/:id/seats-summary", async (req, res) => {
       const col_matrix_2 = [];
 
       for (let i = 0; i < seats.length; i++) {
-        let seat = seats[i];
+        let seat = {...seats[i]};
         if(seat.is_booked){
           seat.is_active = false
         }else{
