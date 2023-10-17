@@ -23,24 +23,30 @@ app.get("/", async (req, res) => {
   let { branch_id, cinema_id, theater_id } = req.query;
   try {
     if (branch_id)
-      bookings = await Booking.find({ branch_id }).select("-password");
+      bookings = await Booking.find({ branch_id }).populate(
+        "branch_id cinema_id movie_id"
+      );
     else if (cinema_id)
-      bookings = await Booking.find({ cinema_id }).select("-password");
+      bookings = await Booking.find({ cinema_id }).populate(
+        "branch_id cinema_id movie_id"
+      );
     else if (theater_id)
-      bookings = await Booking.find({ theater_id }).select("-password");
+      bookings = await Booking.find({ theater_id }).populate(
+        "branch_id cinema_id movie_id"
+      );
     else
       bookings = await Booking.find({
         cinema_id,
         branch_id,
         theater_id,
       }).select("-password");
+    if (!bookings.length) {
+      return res.status(200).json(bookings);
+    }
+    return res.status(200).json(bookings);
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
-  if (!bookings.length) {
-    return res.status(200).json(bookings);
-  }
-  return res.status(200).json(bookings);
 });
 
 // get a single booking

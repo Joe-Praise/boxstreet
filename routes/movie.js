@@ -1,9 +1,8 @@
 let Movie = require("../models/movie");
 let express = require("express");
 let app = express.Router();
-const {upload, handleUpload} = require('../utils/upload')
+const { upload, handleUpload } = require("../utils/upload");
 require("dotenv").config();
-
 
 //get all movies
 app.get("/", async (req, res) => {
@@ -20,7 +19,9 @@ app.get("/", async (req, res) => {
 
 app.get("/doublemovie", async (req, res) => {
   try {
-    const movies = await Movie.find();
+    const movies = await Movie.find()
+      .select("-active")
+      .populate("branch_id cinema_id");
 
     if (!movies) {
       return res.status(404).json({ message: "Movie not Found", code: 404 });
@@ -34,10 +35,7 @@ app.get("/doublemovie", async (req, res) => {
         (categories[movies[i].cinema_id] || 0) + 1;
       doubleOfEachCategoryMovies.push(movies[i]);
     }
-    res.status(200).json({
-      status: "success",
-      data: [...doubleOfEachCategoryMovies],
-    });
+    res.status(200).json(doubleOfEachCategoryMovies);
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
@@ -102,7 +100,7 @@ app.put("/:id/resources", upload.single("image"), async (req, res) => {
     const { id } = req.params;
     const movie = await Movie.findById(id);
 
-    if (!movie){
+    if (!movie) {
       return res
         .status(404)
         .json({ msg: "The id supplied does not exist", code: 404 });
@@ -115,12 +113,12 @@ app.put("/:id/resources", upload.single("image"), async (req, res) => {
 
       movie.image = data.url;
       await movie.save();
-      res.json({ msg: "Data saved", code: 200 })
+      res.json({ msg: "Data saved", code: 200 });
     } else {
       res.json({
         msg: "Movie cannot be saved without an image",
         code: 400,
-      })
+      });
     }
   } catch (err) {
     res.status(500).json({ err: "Server error has occured" });
