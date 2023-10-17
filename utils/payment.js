@@ -14,8 +14,8 @@ const initiatePaymentService = async (req, res) => {
 
     const body = {
       amount: Number(req.body.amount) * 100,
-      email: req.user.email,
-      user_id: req.user._id,
+      email: req.body.email,
+      user_id: req.body._id,
       reference: "BS-TF" + codeGenerator(10),
     };
 
