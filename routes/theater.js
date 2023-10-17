@@ -65,9 +65,15 @@ app.get("/:id/seats-summary", async (req, res) => {
       const col_matrix_2 = [];
 
       for (let i = 0; i < seats.length; i++) {
-        seats[i].position === "LEFT"
-          ? col_matrix_1.push(seats[i])
-          : col_matrix_2.push(seats[i]);
+        let seat = seats[i];
+        if(seat.is_booked){
+          seat.is_active = false
+        }else{
+          seat.is_active = true
+        }
+        seat.position === "LEFT"
+          ? col_matrix_1.push(seat)
+          : col_matrix_2.push(seat);
       }
 
       res.json({
