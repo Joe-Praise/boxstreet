@@ -60,6 +60,9 @@ const BookingSchema = new mongoose.Schema({
         type: String,
         required:true,
     },
+    show_time: {
+        type: String,
+    },
     seats:{
         type:Array,
         default:[]
