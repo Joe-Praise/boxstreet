@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const MovieSchema = new mongoose.Schema({
   cinema_id: { type: String, ref: "cinemas", required: true },
   branch_id: { type: String, ref: "branches", required: true },
-  location_id: { type: String, ref: "locations", required: true },
+  location_id: { type: String, ref: "locations" },
+  genre_id: { type: [String], ref: "genres", required: true },
   name: { type: String, required: true },
   image: { type: String },
   trailer: { type: String, required: true },
@@ -12,7 +13,6 @@ const MovieSchema = new mongoose.Schema({
   cast: { type: Array, default: [] },
   movie_director: { type: String, required: true },
   production_studio: { type: String, required: true },
-  genre: { type: String, required: true },
   duration: { type: String, required: true },
   language: { type: String, required: true },
   movie_rating: { type: String, required: true },
