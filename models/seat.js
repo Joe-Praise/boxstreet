@@ -19,11 +19,6 @@ const SeatSchema = new mongoose.Schema({
   active: { type: Boolean },
 });
 
-SeatSchema.pre(/^find/, function (next) {
-  // hide users with is deleted field set to true
-  this.find({ is_deleted: { $eq: false } });
-  next();
-});
 
 const Seat = mongoose.model("seats", SeatSchema);
 module.exports = Seat;

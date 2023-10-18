@@ -70,7 +70,7 @@ app.get("/:id/ticket-no", async (req, res) => {
   try {
     booking = await Booking.findOne({ ticket_no });
   } catch (err) {
-    console.log(err);
+    res.json(err.message);
   }
   if (!booking) {
     return res.status(404).json({ msg: "Invalid ticket no was passed" });
@@ -81,36 +81,64 @@ app.get("/:id/ticket-no", async (req, res) => {
 // make bookings
 app.post("/", async (req, res) => {
   try {
-    let { seat_number, booking_type, branch_id, theater_id } = req.body;
-    let seat_query = { seat_number, branch_id, theater_id };
+    let { seats, booking_type, branch_id, theater_id } = req.body;
+    let arr = [];
+    let seat_arr = [];
+    let sub_total = 0;
+    let query_arr = [];
+
+    for (let i = 0; i < seats.length; i++) {
+      let a = seats[i];
+      let seat_query = { seat_number: a.no, branch_id, theater_id };
+
+      query_arr.push(seat_query);
+
+      arr.push(a.no);
+
+      sub_total += a.price; 
+
+      let seat = await Seat.findOne(seat_query);
+      seat_arr.push(seat);
+
+      if (!seat)
+        return res.json({ msg: "Invalid seat number or theater was passed" });
+
+      if (seat.is_booked)
+        return res.json({ msg: "Seat has already been booked" });
+    }
+
     let code = Date.now().toString("36");
-    let seat = await Seat.findOne(seat_query);
+
     let theater = await Theater.findById(theater_id);
 
+    let seat_number = arr[0] + "+" + arr.length;
     req.body.ticket_no = seat_number + code;
 
     if (booking_type.toUpperCase() == "ONLINE") {
       req.body.counter_id = "";
     }
     if (!theater) return res.json({ msg: "Invalid theather id was passed" });
-    if (!seat)
-      return res.json({ msg: "Invalid seat number or theater was passed" });
-    if (seat.is_booked)
-      return res.json({ msg: "Seat has already been booked" });
 
-    seat.is_booked = true;
-    theater.unavailable_seat++;
-    theater.available_seat--;
+    for (let i = 0; i < seat_arr.length; i++) {
+      let seat = seat_arr[i];
+      seat.is_booked = true;
+      seat.save();
+    }
+
+    sub_total += req.body.movie_price;
+
+    theater.unavailable_seat += seats.length;
+    theater.available_seat -= seats.length;
 
     if (theater.unavailable_seat == theater.seating_capacity) {
       theater.is_available = false;
     }
 
+    req.body.sub_total = sub_total;
     const booking = new Booking(req.body);
 
     await theater.save();
     await booking.save();
-    await seat.save();
 
     res.status(200).json(booking);
   } catch (err) {
