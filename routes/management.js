@@ -4,16 +4,18 @@ const Management = require("../models/management");
 const { upload, handleUpload } = require("../utils/upload");
 
 app.get("/", async (req, res) => {
- 
   try {
-
     let mngts = [];
     const { branch, cinema } = req.query;
 
     if (branch)
-      mngts = await Management.find({ branch_id: branch }).populate("branch_id");
+      mngts = await Management.find({ branch_id: branch }).populate(
+        "branch_id"
+      );
     else if (cinema)
-      mngts = await Management.find({ cinema_id: cinema }).populate("cinema_id");
+      mngts = await Management.find({ cinema_id: cinema }).populate(
+        "cinema_id"
+      );
     // else
     //   mngts = await Management.find({ cinema_id, branch_id }).select(
     //     "-password"
@@ -29,7 +31,7 @@ app.get("/", async (req, res) => {
 });
 
 // get a single manager
-app.get("/:id", async (req, res) => {
+app.get("/:id/user-info", async (req, res) => {
   let mngt;
   try {
     mngt = await Management.findById(req.params.id).select("-password");
