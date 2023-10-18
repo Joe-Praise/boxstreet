@@ -1,5 +1,9 @@
 const mongoose = require("mongoose")
 
+const SeatSchema = {
+    no:{type:String},
+    price:{ type:Number}
+}
 const BookingSchema = new mongoose.Schema({
     cinema_id: {
         type: String,
@@ -56,18 +60,12 @@ const BookingSchema = new mongoose.Schema({
         type: String,
         required:true,
     },
-    seat_price: {
-        type: Number,
-        required:true,
+    seats:{
+        type:Array,
+        default:[]
     },
     sub_total: {
         type: Number,
-    },
-    seat_number: {
-        type: String,
-    },
-    ticket_type: {
-        type: String,
     },
     ticket_no: {
         type: String,

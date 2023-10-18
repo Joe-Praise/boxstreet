@@ -3,25 +3,29 @@ let app = express.Router();
 const Management = require("../models/management");
 const { upload, handleUpload } = require("../utils/upload");
 
-app.get("/all", async (req, res) => {
-  let mngts = [];
-  let { branch_id, cinema_id } = req.query;
+app.get("/", async (req, res) => {
+ 
   try {
-    if (branch_id)
-      mngts = await Management.find({ branch_id }).select("-password");
-    else if (cinema_id)
-      mngts = await Management.find({ cinema_id }).select("-password");
-    else
-      mngts = await Management.find({ cinema_id, branch_id }).select(
-        "-password"
-      );
+
+    let mngts = [];
+    const { branch, cinema } = req.query;
+
+    if (branch)
+      mngts = await Management.find({ branch_id: branch }).populate("branch_id");
+    else if (cinema)
+      mngts = await Management.find({ cinema_id: cinema }).populate("cinema_id");
+    // else
+    //   mngts = await Management.find({ cinema_id, branch_id }).select(
+    //     "-password"
+    //   );
+    res.json(mngts);
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
-  if (!mngts.length) {
-    return res.status(200).json(mngts);
-  }
-  return res.status(200).json(mngts);
+  // if (!mngts.length) {
+  //   return res.status(200).json(mngts);
+  // }
+  // return res.status(200).json(mngts);
 });
 
 // get a single manager
