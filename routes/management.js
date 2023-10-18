@@ -34,7 +34,7 @@ app.get("/", async (req, res) => {
 app.get("/:id/user-info", async (req, res) => {
   let mngt;
   try {
-    mngt = await Management.findById(req.params.id).select("-password");
+    mngt = await Management.findById(req.params.id).populate("branch_id").select("-password");
   } catch (error) {
     console.log(error);
   }
