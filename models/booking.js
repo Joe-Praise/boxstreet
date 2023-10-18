@@ -67,6 +67,11 @@ const BookingSchema = new mongoose.Schema({
     sub_total: {
         type: Number,
     },
+    ticket_no: {
+        type: String,
+        required:true,
+        lowercase:true
+    },
     is_checked: {
         type: Boolean,
         default: false
