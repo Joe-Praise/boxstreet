@@ -3,6 +3,7 @@ const app = express.Router();
 const Branch = require("../models/branch");
 const Cinema = require("../models/cinema");
 const Location = require("../models/location");
+const Theater = require("../models/theater");
 
 // Get all branches
 app.get("/", async (req, res) => {
@@ -22,6 +23,23 @@ app.get("/", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+//Get all theaters in a particular branch
+app.get("/:id/theaters", async (req, res) => {
+  try{
+    const branchId = req.params.id;
+    const branch = await Branch.findById(branchId);
+
+    if(!branch) {
+      res.status(404).json({ message: "Branch not found", code: 404 });
+    } else {
+      const theaters = await Theater.find({ branch_id: branchId }).populate("branch_id");
+      res.json(theaters)
+    }
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+})
 
 // Create a new branch
 app.post("/", async (req, res) => {
