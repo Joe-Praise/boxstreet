@@ -65,7 +65,7 @@ app.get("/:id/seats-summary", async (req, res) => {
       const col_matrix_2 = [];
 
       for (let i = 0; i < seats.length; i++) {
-        let seat = seats[i];
+        let seat = {...seats[i]._doc};
         if(seat.is_booked){
           seat.is_active = false
         }else{
@@ -80,6 +80,7 @@ app.get("/:id/seats-summary", async (req, res) => {
         col_matrix_1,
         col_matrix_2,
       });
+      
     }
   } catch (err) {
     res.status(500).json({ err: err.message });

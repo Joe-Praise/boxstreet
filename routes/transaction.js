@@ -1,12 +1,12 @@
 const express = require("express");
 const Transaction = require("../models/transaction");
-const { Protect } = require("../middleware/auth");
+// const { Protect } = require("../middleware/auth");
 const axios = require("axios");
 const { initiatePaymentService } = require("../utils/payment");
 let app = express.Router();
 require("dotenv").config();
 
-app.post("/initiate-payment", Protect, initiatePaymentService);
+app.post("/initiate-payment", initiatePaymentService);
 
 app.get("/getstatus", async (req, res) => {
   try {
