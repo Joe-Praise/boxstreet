@@ -146,6 +146,27 @@ app.post("/", async (req, res) => {
   }
 });
 
+
+// get a single booking
+app.put("/check-in", async (req, res) => {
+  let booking;
+  let { status, ticket_no } = req.body;
+  
+  try {
+    booking = await Booking.findOne({ ticket_no });
+    booking.checked_in_at = Date.now();
+    booking.is_checked = status;
+    await booking.save()
+  } catch (err) {
+    console.log(err.message);
+  }
+  if (!booking) {
+    return res.status(404).json({ msg: "Invalid ticket no was passed" });
+  }
+  return res.status(200).json(booking);
+});
+
+
 // updating Booking
 app.put("/:id", async (req, res) => {
   const { fullname, email, phone, quantity, seat_number } = req.body;
@@ -166,23 +187,6 @@ app.put("/:id", async (req, res) => {
     return res
       .status(500)
       .json({ msg: "Unable to Update booking.", code: 500 });
-  }
-  return res.status(200).json(booking);
-});
-
-// get a single booking
-app.put("/check-in", async (req, res) => {
-  let booking;
-  let { status, ticket_no } = req.body;
-  try {
-    booking = await Booking.findOne({ ticket_no });
-    booking.checked_in_at = Date.now();
-    booking.is_checked = status;
-  } catch (err) {
-    console.log(err);
-  }
-  if (!booking) {
-    return res.status(404).json({ msg: "Invalid ticket no was passed" });
   }
   return res.status(200).json(booking);
 });
