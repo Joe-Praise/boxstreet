@@ -6,7 +6,12 @@ let Category = require("../models/category");
 // Get all categories
 app.get("/", async (req, res) => {
   try {
-    const categories = await Category.find().populate("cinema_id");
+    let {cinema_id} = req.query
+    let categories;
+
+    if(cinema_id)  categories = await Category.find({cinema_id}).populate("cinema_id");
+    else categories = await Category.find().populate("cinema_id");
+
     res.json(categories);
   } catch (err) {
     res.status(500).json({ error: err.message });

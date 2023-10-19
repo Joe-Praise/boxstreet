@@ -60,7 +60,7 @@ app.get("/:id/seats-summary", async (req, res) => {
     if (!theater) {
       res.status(404).json({ message: "Theater not found", code: 404 });
     } else {
-      let seats = await Seat.find().populate("category_id");
+      let seats = await Seat.find({theater_id:theaterId}).populate("category_id");
       const col_matrix_1 = [];
       const col_matrix_2 = [];
 
