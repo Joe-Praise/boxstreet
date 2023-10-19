@@ -10,6 +10,10 @@ const TheaterSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  row:{
+    type:Number,
+    default:1
+  },
   unavailable_seat: {
     type: Number,
     default: 0,
