@@ -14,6 +14,10 @@ const TheaterSchema = new mongoose.Schema({
     type:Number,
     default:1
   },
+  seat_capacity:{
+    type: Number,
+    default: 0,
+  },
   unavailable_seat: {
     type: Number,
     default: 0,
