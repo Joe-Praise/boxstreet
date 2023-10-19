@@ -4,7 +4,7 @@ const MovieSchema = new mongoose.Schema({
   cinema_id: { type: String, ref: "cinemas", required: true },
   branch_id: { type: String, ref: "branches", required: true },
   location_id: { type: String, ref: "locations" },
-  genre_id: { type: [String], ref: "genres", required: true },
+  genre_id: { type: Array, ref: "genres", required: true },
   name: { type: String, required: true },
   image: { type: String },
   trailer: { type: String, required: true },
