@@ -1,5 +1,6 @@
 const express = require("express");
 const Seat = require("../models/seat");
+const Theater = require("../models/theater");
 let app = express.Router();
 
 // Get all seats
@@ -41,6 +42,11 @@ app.post("/", async (req, res) => {
 
     const seat = new Seat(seatData);
     const savedSeat = await seat.save();
+    const theater = await Theater.findById(req.body.theater_id);
+
+    theater.seat_capacity++;
+    await theater.save();
+
     res.status(201).json({
       status: "success",
       data: savedSeat,
