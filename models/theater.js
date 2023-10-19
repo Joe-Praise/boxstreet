@@ -10,7 +10,7 @@ const TheaterSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  row:{
+  screen:{
     type:Number,
     default:1
   },
