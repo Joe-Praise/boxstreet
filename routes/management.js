@@ -33,6 +33,7 @@ app.get("/", async (req, res) => {
 // get a single manager
 app.get("/:id/user-info", async (req, res) => {
   let mngt;
+  
   try {
     mngt = await Management.findById(req.params.id).populate("branch_id").select("-password");
   } catch (error) {
@@ -42,6 +43,7 @@ app.get("/:id/user-info", async (req, res) => {
     return res.status(400).json("You are not a Manager");
   }
   return res.status(200).json(mngt);
+
 });
 
 // create a manager
