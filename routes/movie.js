@@ -107,6 +107,7 @@ app.post("/", async (req, res) => {
     const movieData = req.body;
 
     const movie = new Movie(movieData);
+
     const savedMovie = await movie.save();
 
     res.status(201).json({
@@ -117,6 +118,7 @@ app.post("/", async (req, res) => {
     res.status(400).json({ err: err.message });
   }
 });
+
 
 //update a movie by id
 app.put("/:id", async (req, res) => {
@@ -179,13 +181,12 @@ app.delete("/:id", async (req, res) => {
       res.status(404).json({ msg: "Movie not found", code: 404 });
     } else {
       await movie.deleteOne();
-      res
-        .status(200)
-        .send({ msg: "Movie has been deleted successfully", code: 202 });
+      res.status(200).send({ msg: "Movie has been deleted successfully", code: 202 });
     }
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
 });
+
 
 module.exports = app;
