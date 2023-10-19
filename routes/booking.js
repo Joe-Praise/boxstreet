@@ -54,7 +54,7 @@ app.get("/:id", async (req, res) => {
   let booking;
   try {
     booking = await Booking.findById(req.params.id).populate(
-      "branch_id cinema_id movie_id"
+      "branch_id cinema_id movie_id theater_id"
     );
   } catch (err) {
     console.log(err);
