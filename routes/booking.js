@@ -53,7 +53,9 @@ app.get("/", async (req, res) => {
 app.get("/:id", async (req, res) => {
   let booking;
   try {
-    booking = await Booking.findById(req.params.id);
+    booking = await Booking.findById(req.params.id).populate(
+      "branch_id cinema_id schedule_id"
+    );
   } catch (err) {
     console.log(err);
   }
@@ -95,7 +97,7 @@ app.post("/", async (req, res) => {
 
       arr.push(a.no);
 
-      sub_total += a.price; 
+      sub_total += a.price;
 
       let seat = await Seat.findOne(seat_query);
       seat_arr.push(seat);
@@ -146,17 +148,16 @@ app.post("/", async (req, res) => {
   }
 });
 
-
 // get a single booking
 app.put("/check-in", async (req, res) => {
   let booking;
   let { status, ticket_no } = req.body;
-  
+
   try {
     booking = await Booking.findOne({ ticket_no });
     booking.checked_in_at = Date.now();
     booking.is_checked = status;
-    await booking.save()
+    await booking.save();
   } catch (err) {
     console.log(err.message);
   }
@@ -165,7 +166,6 @@ app.put("/check-in", async (req, res) => {
   }
   return res.status(200).json(booking);
 });
-
 
 // updating Booking
 app.put("/:id", async (req, res) => {

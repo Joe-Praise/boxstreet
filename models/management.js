@@ -5,6 +5,7 @@ const ManagementSchema = new mongoose.Schema({
   branch_id: {
     type: String,
     required: true,
+    ref:"branches"
   },
   cinema_id: {
     type: String,
