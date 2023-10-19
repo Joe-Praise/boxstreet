@@ -10,10 +10,6 @@ const TheaterSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  seating_capacity: {
-    type: Number,
-    required: true,
-  },
   unavailable_seat: {
     type: Number,
     default: 0,
@@ -24,21 +20,7 @@ const TheaterSchema = new mongoose.Schema({
   },
   is_available: {
     type: Boolean,
-  },
-  row: {
-    type: Number,
-    default: 2,
-  },
-  column: {
-    type: Number,
-    default: 2,
-  },
-  col_matrix_1: {
-    type: Array,
-  },
-  col_matrix_2: {
-    type: Array,
-  },
+  }
 });
 const Theater = mongoose.model("theaters", TheaterSchema);
 module.exports = Theater;
