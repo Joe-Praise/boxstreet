@@ -20,9 +20,13 @@ let app = express.Router();
 
 app.get("/", async (req, res) => {
   let bookings = [];
-  let { branch_id, cinema_id, theater_id } = req.query;
+  let { branch_id, cinema_id, theater_id, email } = req.query;
   try {
-    if (branch_id)
+    if (cinema_id && email) {
+      bookings = await Booking.find({ cinema_id, email }).populate(
+        "branch_id cinema_id movie_id"
+      );
+    } else if (branch_id)
       bookings = await Booking.find({ branch_id }).populate(
         "branch_id cinema_id movie_id"
       );
@@ -40,6 +44,24 @@ app.get("/", async (req, res) => {
         branch_id,
         theater_id,
       }).select("-password");
+    if (!bookings.length) {
+      return res.status(200).json(bookings);
+    }
+    return res.status(200).json(bookings);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
+
+// get the bookings by email and cinema_id
+TODO: app.get("/users/:id", async (req, res) => {
+  try {
+    let { id } = req.params;
+    let bookings = [];
+    bookings = await Booking.find({ user_id: id }).populate(
+      "branch_id cinema_id movie_id"
+    );
+
     if (!bookings.length) {
       return res.status(200).json(bookings);
     }
@@ -95,7 +117,7 @@ app.post("/", async (req, res) => {
 
       arr.push(a.no);
 
-      sub_total += a.price; 
+      sub_total += a.price;
 
       let seat = await Seat.findOne(seat_query);
       seat_arr.push(seat);
@@ -146,17 +168,16 @@ app.post("/", async (req, res) => {
   }
 });
 
-
 // get a single booking
 app.put("/check-in", async (req, res) => {
   let booking;
   let { status, ticket_no } = req.body;
-  
+
   try {
     booking = await Booking.findOne({ ticket_no });
     booking.checked_in_at = Date.now();
     booking.is_checked = status;
-    await booking.save()
+    await booking.save();
   } catch (err) {
     console.log(err.message);
   }
@@ -165,7 +186,6 @@ app.put("/check-in", async (req, res) => {
   }
   return res.status(200).json(booking);
 });
-
 
 // updating Booking
 app.put("/:id", async (req, res) => {

@@ -8,13 +8,21 @@ require("dotenv").config();
 app.get("/", async (req, res) => {
   let movies = [];
   try {
-    const { cinema_id, branch_id } = req.query;
-    if (cinema_id) {
-      movies = await Movie.find({ cinema_id })
+    const { cinema_id, branch_id, location_id } = req.query;
+
+    if (location_id && cinema_id && branch_id) {
+      movies = await Movie.find({
+        location_id,
+        cinema_id,
+        branch_id,
+      })
         .select("-active")
         .populate("branch_id cinema_id location_id");
-    } else if (branch_id) {
-      movies = await Movie.find({ branch_id })
+    } else if (location_id && cinema_id) {
+      movies = await Movie.find({
+        location_id,
+        cinema_id,
+      })
         .select("-active")
         .populate("branch_id cinema_id location_id");
     } else if (cinema_id && branch_id) {
@@ -22,6 +30,14 @@ app.get("/", async (req, res) => {
         cinema_id,
         branch_id,
       })
+        .select("-active")
+        .populate("branch_id cinema_id location_id");
+    } else if (cinema_id) {
+      movies = await Movie.find({ cinema_id })
+        .select("-active")
+        .populate("branch_id cinema_id location_id");
+    } else if (branch_id) {
+      movies = await Movie.find({ branch_id })
         .select("-active")
         .populate("branch_id cinema_id location_id");
     } else {
@@ -50,23 +66,24 @@ app.get("/doublemovie", async (req, res) => {
   let movies = [];
   try {
     const { cinema_id, branch_id } = req.query;
-    if (cinema_id) {
-      movies = await Movie.find({ cinema_id })
-        .select("-active")
-        .populate("branch_id cinema_id location_id");
-    } else if (branch_id) {
-      movies = await Movie.find({ branch_id })
-        .select("-active")
-        .populate("branch_id cinema_id location_id");
-    } else if (cinema_id && branch_id) {
+    if (cinema_id && branch_id) {
       movies = await Movie.find({
         cinema_id,
         branch_id,
+        coming_soon: false,
       })
         .select("-active")
         .populate("branch_id cinema_id location_id");
+    } else if (cinema_id) {
+      movies = await Movie.find({ cinema_id, coming_soon: false })
+        .select("-active")
+        .populate("branch_id cinema_id location_id");
+    } else if (branch_id) {
+      movies = await Movie.find({ branch_id, coming_soon: false })
+        .select("-active")
+        .populate("branch_id cinema_id location_id");
     } else {
-      movies = await Movie.find()
+      movies = await Movie.find({ coming_soon: false })
         .select("-active")
         .populate("branch_id cinema_id location_id");
     }

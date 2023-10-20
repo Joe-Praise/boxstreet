@@ -8,6 +8,7 @@ let app = express.Router();
 // Get all movie schedule
 app.get("/", async (req, res) => {
   let movieschedule = [];
+  let dates = [];
   try {
     const { movie_id, cinema_id, branch_id } = req.query;
     if (movie_id) {
@@ -42,8 +43,25 @@ app.get("/", async (req, res) => {
         data: movieschedule,
       });
     }
+
+    const categories = {};
+    for (let i = 0; i < movieschedule.length; i++) {
+      const showTime = movieschedule[i].show_time;
+      if (categories[showTime] === 1) continue;
+      categories[showTime] = (categories[showTime] || 0) + 1;
+      if (showTime.length > 1) {
+        for (let j = 0; j < showTime.length; j++) {
+          const singleDate = showTime[j];
+          dates.push(singleDate);
+        }
+      } else {
+        dates.push(showTime);
+      }
+    }
+
     return res.status(200).json({
       status: "success",
+      dates,
       data: movieschedule,
     });
   } catch (err) {
@@ -56,51 +74,17 @@ app.get("/search", async (req, res) => {
   let filteredSchedules = [];
   try {
     const { name, cinema_id, branch_id } = req.query;
-    // if (movie_id) {
-    //   movieschedule = await MovieSchedule.find({ movie_id })
-    //     .select("-active")
-    //     .populate("branch_id cinema_id movie_id");
-    // } else if (cinema_id) {
-    //   movieschedule = await MovieSchedule.find({ cinema_id })
-    //     .select("-active")
-    //     .populate("branch_id cinema_id movie_id");
-    // } else if (branch_id) {
-    //   movieschedule = await MovieSchedule.find({ branch_id })
-    //     .select("-active")
-    //     .populate("branch_id cinema_id movie_id");
-    // } else if ((cinema_id, movie_id, branch_id)) {
-    //   movieschedule = await MovieSchedule.find({
-    //     cinema_id,
-    //     movie_id,
-    //     branch_id,
-    //   })
-    //     .select("-active")
-    //     .populate("branch_id cinema_id movie_id");
-    // } else {
-    //   movieschedule = await MovieSchedule.find()
-    //     .select("-active")
-    //     .populate("branch_id cinema_id movie_id");
-    // }
-
-    // if (!movieschedule.length) {
-    //   return res.status(200).json({
-    //     status: "movie is not scheduled for this cimena!",
-    //     data: movieschedule,
-    //   });
-    // }
     if (name && cinema_id && branch_id) {
       movieschedule = await MovieSchedule.find({
         cinema_id,
         branch_id,
       }).populate("movie_id");
-
       filteredSchedules = movieschedule.map((el) => el.movie_id.name === name);
-      console.log(filteredSchedules);
     }
 
     return res.status(200).json({
       status: "success",
-      data: movieschedule,
+      data: filteredSchedules,
     });
   } catch (err) {
     res.status(500).json({ err: err.message });

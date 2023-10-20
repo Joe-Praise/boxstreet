@@ -17,7 +17,9 @@ const filterObj = (obj, ...allowedFields) => {
 // Get all users
 app.get("/", async (req, res) => {
   try {
-    const user = await User.find();
+    const user = await User.find()
+      .populate("cinema_id branch_id")
+      .select("-is_verified");
     res.status(200).json({
       status: "success",
       data: user,
@@ -31,7 +33,10 @@ app.get("/", async (req, res) => {
 app.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id);
+    console.log(id);
+    const user = await User.findById(id)
+      .populate("cinema_id branch_id")
+      .select("-is_verified");
     if (!user) {
       res.status(404).json({ msg: "User not found", code: 404 });
     } else {
@@ -82,7 +87,13 @@ app.patch("/:id", Protect, async (req, res) => {
     }
 
     // 2) filter for unwanted field that are not allowed to be updated
-    const filteredBody = filterObj(req.body, "name", "email");
+    const filteredBody = filterObj(
+      req.body,
+      "name",
+      "email",
+      "cinema_id",
+      "branch_id"
+    );
 
     // 3) Update user document
     const updatedUser = await User.findByIdAndUpdate(
