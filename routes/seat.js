@@ -1,17 +1,22 @@
 const express = require("express");
 const Seat = require("../models/seat");
+const Theater = require("../models/theater");
 let app = express.Router();
 
 // Get all seats
 app.get("/", async (req, res) => {
   try {
-    const seat = await Seat.find().populate(
-      "theater_id branch_id category_id cinema_id"
-    );
+    let {theater_id} = req.query;
+    let seats;
+
+    if(theater_id) seats= await Seat.find({theater_id}).populate("theater_id branch_id category_id cinema_id" );
+    else return res.json({msg:"Theater id must be passed"})
+
     res.status(200).json({
       status: "success",
-      data: seat,
+      data: seats,
     });
+    
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
@@ -41,6 +46,11 @@ app.post("/", async (req, res) => {
 
     const seat = new Seat(seatData);
     const savedSeat = await seat.save();
+    const theater = await Theater.findById(req.body.theater_id);
+
+    theater.seat_capacity++;
+    await theater.save();
+
     res.status(201).json({
       status: "success",
       data: savedSeat,

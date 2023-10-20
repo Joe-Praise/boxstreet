@@ -48,7 +48,7 @@ const BookingSchema = new mongoose.Schema({
         enum: ["ONLINE", "ONSITE"],
         uppercase: true
     },
-    fullname: {
+    full_name: {
         type: String,
         required:true,
     },
@@ -59,6 +59,9 @@ const BookingSchema = new mongoose.Schema({
     email: {
         type: String,
         required:true,
+    },
+    show_time: {
+        type: String,
     },
     seats:{
         type:Array,

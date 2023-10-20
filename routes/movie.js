@@ -17,21 +17,21 @@ app.get("/", async (req, res) => {
         branch_id,
       })
         .select("-active")
-        .populate("branch_id cinema_id location_id");
+        .populate("branch_id cinema_id location_id genre_id");
     } else if (location_id && cinema_id) {
       movies = await Movie.find({
         location_id,
         cinema_id,
       })
         .select("-active")
-        .populate("branch_id cinema_id location_id");
+        .populate("branch_id cinema_id location_id genre_id");
     } else if (cinema_id && branch_id) {
       movies = await Movie.find({
         cinema_id,
         branch_id,
       })
         .select("-active")
-        .populate("branch_id cinema_id location_id");
+        .populate("branch_id cinema_id location_id genre_id");
     } else if (cinema_id) {
       movies = await Movie.find({ cinema_id })
         .select("-active")
@@ -43,7 +43,7 @@ app.get("/", async (req, res) => {
     } else {
       movies = await Movie.find()
         .select("-active")
-        .populate("branch_id cinema_id location_id");
+        .populate("branch_id cinema_id location_id genre_id");
     }
 
     if (!movies.length) {
@@ -124,6 +124,7 @@ app.post("/", async (req, res) => {
     const movieData = req.body;
 
     const movie = new Movie(movieData);
+
     const savedMovie = await movie.save();
 
     res.status(201).json({
