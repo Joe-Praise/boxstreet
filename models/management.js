@@ -4,7 +4,6 @@ const bcrypt = require("bcryptjs");
 const ManagementSchema = new mongoose.Schema({
   branch_id: {
     type: String,
-    required: true,
     ref:"branches"
   },
   cinema_id: {
@@ -17,7 +16,7 @@ const ManagementSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["COUNTER", "THEATER", "WEBSITE"],
+    enum: ["COUNTER", "THEATER", "WEBSITE", "CINEMA"],
     uppercase: true,
   },
   password: {

@@ -1,9 +1,8 @@
 const express = require("express");
 const app = express.Router();
 const Cinema = require("../models/cinema");
-const {upload,handleUpload} = require('../utils/upload')
+const { upload, handleUpload } = require("../utils/upload");
 require("dotenv").config();
-
 
 // Get all archived cinema
 app.get("/archived", async (req, res) => {
@@ -48,7 +47,7 @@ app.post("/", async (req, res) => {
     const cinemaData = req.body;
     const cinema = new Cinema(cinemaData);
     const savedCinema = await cinema.save();
-    res.status(201).json(savedCinema);
+    return res.status(201).json(savedCinema);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -119,7 +118,8 @@ app.put("/:id/resources", upload.single("image"), async (req, res) => {
         msg: "Cinema cannot be saved without any image",
         code: 400,
       });
-    }z
+    }
+    z;
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ err: "Server error has occurred" });
@@ -151,8 +151,8 @@ app.delete("/:id", async (req, res) => {
     if (!cinema) {
       res.status(404).json({ msg: "Cinema not found", code: 404 });
     } else {
-    //   const archivedCinema = new ArchivedCinema(cinema.toObject());
-    //   await archivedCinema.save();
+      //   const archivedCinema = new ArchivedCinema(cinema.toObject());
+      //   await archivedCinema.save();
 
       await cinema.deleteOne();
 
