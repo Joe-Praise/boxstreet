@@ -20,9 +20,13 @@ let app = express.Router();
 
 app.get("/", async (req, res) => {
   let bookings = [];
-  let { branch_id, cinema_id, theater_id } = req.query;
+  let { branch_id, cinema_id, theater_id, email } = req.query;
   try {
-    if (branch_id)
+    if (cinema_id && email) {
+      bookings = await Booking.find({ cinema_id, email }).populate(
+        "branch_id cinema_id movie_id"
+      );
+    } else if (branch_id)
       bookings = await Booking.find({ branch_id }).populate(
         "branch_id cinema_id movie_id"
       );
@@ -40,6 +44,24 @@ app.get("/", async (req, res) => {
         branch_id,
         theater_id,
       }).select("-password");
+    if (!bookings.length) {
+      return res.status(200).json(bookings);
+    }
+    return res.status(200).json(bookings);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
+
+// get the bookings by email and cinema_id
+TODO: app.get("/users/:id", async (req, res) => {
+  try {
+    let { id } = req.params;
+    let bookings = [];
+    bookings = await Booking.find({ user_id: id }).populate(
+      "branch_id cinema_id movie_id"
+    );
+
     if (!bookings.length) {
       return res.status(200).json(bookings);
     }

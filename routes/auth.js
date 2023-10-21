@@ -41,9 +41,7 @@ const createSendToken = (user, statusCode, res) => {
   res.status(statusCode).json({
     status: "success",
     token,
-    data: {
-      user,
-    },
+    data: user,
   });
 };
 
@@ -80,11 +78,10 @@ app.post("/signup", async (req, res) => {
       email: userData.email,
       cinema_id: userData.cinema_id,
     };
-  
+
     const userVerifyInfo = await axios.post(VERIFICATION_URL, data);
     const info = userVerifyInfo.data;
     // const message = `Did you just sign up with Box Street? \nHere's your verification code: ${info.code}`;
-
 
     const user = new User(userData);
     const savedUser = await user.save();
@@ -145,7 +142,6 @@ app.post("/management-login", async (req, res) => {
       !manager ||
       !(await manager.correctPassword(password, manager.password))
     ) {
-      console.log(manager);
       return res.status(401).json({ msg: "Incorrect email or password" });
     }
 

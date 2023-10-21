@@ -7,18 +7,41 @@ const Seat = require("../models/seat");
 // Get all theaters
 app.get("/", async (req, res) => {
   try {
-    let {branch_id} = req.query;
+    let { branch_id, cinema_id } = req.query;
     let theaters;
 
-    if(branch_id) theaters = await Theater.find({branch_id}).populate("branch_id");
-    else theaters = await Theater.find().populate("branch_id");
-    
+    if (branch_id && cinema_id)
+      theaters = await Theater.find({ branch_id, cinema_id }).populate(
+        "branch_id cinema_id"
+      );
+    else theaters = await Theater.find().populate("branch_id cinema_id");
+
     res.json(theaters);
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({ error: "An error occurred", code: 500 });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ err: "An error occurred", code: 500 });
   }
 });
+
+// app.get("/theater-in-cinema", async (req, res) => {
+//   try {
+//     let theaters = [];
+//     let { branch_id, cinema_id } = req.query;
+//     if (branch_id && cinema_id) {
+//       theaters = await Theater.find({ branch_id }).populate("branch_id");
+
+//       if (theaters.length < 1) {
+//         res.json(theaters);
+//       }
+
+//       theaters.filter((el) => theaters.branch_id.cinema_id === cinema_id);
+
+//       return res.json(theaters);
+//     }
+//   } catch (err) {
+//     res.status(500).json({ err: err.message });
+//   }
+// });
 
 // Get a theater by ID
 app.get("/:id", async (req, res) => {
@@ -65,11 +88,11 @@ app.get("/:id/seats-summary", async (req, res) => {
       const col_matrix_2 = [];
 
       for (let i = 0; i < seats.length; i++) {
-        let seat = {...seats[i]._doc};
-        if(seat.is_booked){
-          seat.is_active = false
-        }else{
-          seat.is_active = true
+        let seat = { ...seats[i]._doc };
+        if (seat.is_booked) {
+          seat.is_active = false;
+        } else {
+          seat.is_active = true;
         }
         seat.position === "LEFT"
           ? col_matrix_1.push(seat)
@@ -80,7 +103,6 @@ app.get("/:id/seats-summary", async (req, res) => {
         col_matrix_1,
         col_matrix_2,
       });
-      
     }
   } catch (err) {
     res.status(500).json({ err: err.message });

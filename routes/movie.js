@@ -8,13 +8,21 @@ require("dotenv").config();
 app.get("/", async (req, res) => {
   let movies = [];
   try {
-    const { cinema_id, branch_id } = req.query;
-    if (cinema_id) {
-      movies = await Movie.find({ cinema_id })
+    const { cinema_id, branch_id, location_id } = req.query;
+
+    if (location_id && cinema_id && branch_id) {
+      movies = await Movie.find({
+        location_id,
+        cinema_id,
+        branch_id,
+      })
         .select("-active")
         .populate("branch_id cinema_id location_id genre_id");
-    } else if (branch_id) {
-      movies = await Movie.find({ branch_id })
+    } else if (location_id && cinema_id) {
+      movies = await Movie.find({
+        location_id,
+        cinema_id,
+      })
         .select("-active")
         .populate("branch_id cinema_id location_id genre_id");
     } else if (cinema_id && branch_id) {
@@ -22,6 +30,14 @@ app.get("/", async (req, res) => {
         cinema_id,
         branch_id,
       })
+        .select("-active")
+        .populate("branch_id cinema_id location_id genre_id");
+    } else if (cinema_id) {
+      movies = await Movie.find({ cinema_id })
+        .select("-active")
+        .populate("branch_id cinema_id location_id genre_id");
+    } else if (branch_id) {
+      movies = await Movie.find({ branch_id })
         .select("-active")
         .populate("branch_id cinema_id location_id genre_id");
     } else {
@@ -50,23 +66,24 @@ app.get("/doublemovie", async (req, res) => {
   let movies = [];
   try {
     const { cinema_id, branch_id } = req.query;
-    if (cinema_id) {
-      movies = await Movie.find({ cinema_id })
-        .select("-active")
-        .populate("branch_id cinema_id location_id");
-    } else if (branch_id) {
-      movies = await Movie.find({ branch_id })
-        .select("-active")
-        .populate("branch_id cinema_id location_id");
-    } else if (cinema_id && branch_id) {
+    if (cinema_id && branch_id) {
       movies = await Movie.find({
         cinema_id,
         branch_id,
+        coming_soon: false,
       })
         .select("-active")
         .populate("branch_id cinema_id location_id");
+    } else if (cinema_id) {
+      movies = await Movie.find({ cinema_id, coming_soon: false })
+        .select("-active")
+        .populate("branch_id cinema_id location_id");
+    } else if (branch_id) {
+      movies = await Movie.find({ branch_id, coming_soon: false })
+        .select("-active")
+        .populate("branch_id cinema_id location_id");
     } else {
-      movies = await Movie.find()
+      movies = await Movie.find({ coming_soon: false })
         .select("-active")
         .populate("branch_id cinema_id location_id");
     }
@@ -118,7 +135,6 @@ app.post("/", async (req, res) => {
     res.status(400).json({ err: err.message });
   }
 });
-
 
 //update a movie by id
 app.put("/:id", async (req, res) => {
@@ -181,12 +197,13 @@ app.delete("/:id", async (req, res) => {
       res.status(404).json({ msg: "Movie not found", code: 404 });
     } else {
       await movie.deleteOne();
-      res.status(200).send({ msg: "Movie has been deleted successfully", code: 202 });
+      res
+        .status(200)
+        .send({ msg: "Movie has been deleted successfully", code: 202 });
     }
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
 });
-
 
 module.exports = app;

@@ -6,6 +6,11 @@ const TheaterSchema = new mongoose.Schema({
     required: true,
     ref: "branches",
   },
+  cinema_id: {
+    type: String,
+    required: true,
+    ref: "cinemas",
+  },
   name: {
     type: String,
     required: true,
