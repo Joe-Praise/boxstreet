@@ -112,9 +112,9 @@ app.put("/:id/resources", upload.single("image"), async (req, res) => {
 
       cinema.image = data.url;
       await cinema.save();
-      res.json({ msg: "Data saved", code: 200 });
+      return res.json({ msg: "Data saved", code: 200 });
     } else {
-      res.json({
+      return res.json({
         msg: "Cinema cannot be saved without any image",
         code: 400,
       });
