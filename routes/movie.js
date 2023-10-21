@@ -35,11 +35,11 @@ app.get("/", async (req, res) => {
     } else if (cinema_id) {
       movies = await Movie.find({ cinema_id })
         .select("-active")
-        .populate("branch_id cinema_id location_id");
+        .populate("branch_id cinema_id location_id genre_id");
     } else if (branch_id) {
       movies = await Movie.find({ branch_id })
         .select("-active")
-        .populate("branch_id cinema_id location_id");
+        .populate("branch_id cinema_id location_id genre_id");
     } else {
       movies = await Movie.find()
         .select("-active")

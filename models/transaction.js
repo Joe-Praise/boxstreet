@@ -17,6 +17,14 @@ const TransactionSchema = new mongoose.Schema({
   reference: {
     type: String,
   },
+  cinema_id: {
+    type: mongoose.Types.ObjectId,
+    ref: "cinemas",
+  },
+  branch_id: {
+    type: mongoose.Types.ObjectId,
+    ref: "branches",
+  },
   user_id: {
     type: mongoose.Types.ObjectId,
     ref: "users",
