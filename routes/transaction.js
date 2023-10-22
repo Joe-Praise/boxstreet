@@ -1,5 +1,6 @@
 const express = require("express");
 const Transaction = require("../models/transaction");
+const Bookings = require("../models/booking");
 // const { Protect } = require("../middleware/auth");
 const axios = require("axios");
 const { initiatePaymentService } = require("../utils/payment");
@@ -13,6 +14,9 @@ app.get("/getstatus", async (req, res) => {
     let { reference } = req.query;
 
     const transaction = await Transaction.findOne({
+      reference,
+    });
+    const booking = await Bookings.findOne({
       reference,
     });
 
@@ -42,6 +46,7 @@ app.get("/getstatus", async (req, res) => {
 
     res.status(200).json({
       status: "success",
+      reference,
     });
   } catch (err) {
     return res.status(402).json({
