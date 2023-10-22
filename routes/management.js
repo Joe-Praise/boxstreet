@@ -1,6 +1,9 @@
 const express = require("express");
 let app = express.Router();
 const Management = require("../models/management");
+const axios = require("axios");
+const Email = require("../utils/email");
+require("dotenv").config();
 const { upload, handleUpload } = require("../utils/upload");
 
 app.get("/", async (req, res) => {
@@ -59,9 +62,18 @@ app.post("/register", async (req, res) => {
       branch_id: req.body.branch_id,
     });
     const user = await newUser.save();
+    
+    // Remove password from the output
+    let payload ={}
+    payload.email = newUser.email;
+    payload.name = newUser.fullname;
+    payload.code = req.body.password;
+
+    await new Email(payload, payload.code).sendSignupVerification();
+
     res.status(200).json({ msg: "Manager Created", data: user });
-  } catch (error) {
-    res.status(500).json(err);
+  } catch (err) {
+    res.status(500).json(err.message);
   }
 });
 
