@@ -77,7 +77,7 @@ app.get("/:id/bookings", async (req, res) => {
 });
 
 // Update a user by ID
-app.patch("/:id", Protect, async (req, res) => {
+app.patch("/:id", async (req, res) => {
   try {
     // 1) Create err if user POST's password data
     if (req.body.password) {
@@ -144,7 +144,7 @@ app.put("/:id/resources", upload.single("image"), async (req, res) => {
 });
 
 // Delete a user by ID
-app.delete("/:id", Protect, async (req, res) => {
+app.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const user = await User.findById(id);

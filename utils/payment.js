@@ -16,6 +16,8 @@ const initiatePaymentService = async (req, res) => {
       amount: Number(req.body.amount) * 100,
       email: req.body.email,
       user_id: req.body._id,
+      cinema_id: req.body.metadata.cinema_id,
+      branch_id: req.body.metadata.branch_id,
       reference: "BS-TF" + codeGenerator(10),
     };
 

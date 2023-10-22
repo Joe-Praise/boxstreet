@@ -38,7 +38,7 @@ app.get("/", async (req, res) => {
       bookings = await Booking.find({ theater_id }).populate(
         "branch_id cinema_id movie_id"
       );
-    else 
+    else
       bookings = await Booking.find({
         cinema_id,
         branch_id,
@@ -53,8 +53,7 @@ app.get("/", async (req, res) => {
   }
 });
 
-// get the bookings by email and cinema_id
-TODO: app.get("/users/:id", async (req, res) => {
+app.get("/users/:id", async (req, res) => {
   try {
     let { id } = req.params;
     let bookings = [];
