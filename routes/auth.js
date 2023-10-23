@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const axios = require("axios");
 const Email = require("../utils/email");
 require("dotenv").config();
-
+const bcrypt = require("bcryptjs");
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -273,6 +273,34 @@ app.patch("/reset-password/management", async (req, res) => {
     }
   } catch (err) {
     res.status(400).json({ err: err.message });
+  }
+});
+
+app.put("/update-password", async (req, res) => {
+  const { email, password, newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    console.log("Hashed New Password:", hashedNewPassword);
+    user.password = hashedNewPassword;
+    await user.save();
+
+    return res.status(200).json({ message: "Password updated successfully" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 

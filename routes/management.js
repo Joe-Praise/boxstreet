@@ -1,6 +1,7 @@
 const express = require("express");
 let app = express.Router();
 const Management = require("../models/management");
+const Cinema = require("../models/cinema");
 const axios = require("axios");
 const Email = require("../utils/email");
 require("dotenv").config();
@@ -8,29 +9,25 @@ const { upload, handleUpload } = require("../utils/upload");
 
 app.get("/", async (req, res) => {
   try {
-    let mngts = [];
-    const { branch, cinema } = req.query;
+    // let mngts = [];
+    // const { cinema_id } = req.body;
 
-    if (branch)
-      mngts = await Management.find({ branch_id: branch }).populate(
-        "branch_id"
-      );
-    else if (cinema)
-      mngts = await Management.find({ cinema_id: cinema }).populate(
-        "cinema_id"
-      );
-    // else
-    //   mngts = await Management.find({ cinema_id, branch_id }).select(
-    //     "-password"
+    let cinema = await Cinema.findById(cinema_id);
+
+    // if (branch)
+    //   mngts = await Management.find({ branch_id: branch }).populate(
+    //     "branch_id"
     //   );
-    res.json(mngts);
+    // else 
+    if (!cinema)
+    return res.status(404).send({ msg: "Cinema does not exist", code: 404 });
+
+    let management = new Management(req.body);
+    await management.save();
+    res.send(management);
   } catch (err) {
-    res.status(500).json({ err: err.message });
+    res.status(400).json({ error: err.message });
   }
-  // if (!mngts.length) {
-  //   return res.status(200).json(mngts);
-  // }
-  // return res.status(200).json(mngts);
 });
 
 // get a single manager
