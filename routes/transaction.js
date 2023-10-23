@@ -1,6 +1,7 @@
 const express = require("express");
 const Transaction = require("../models/transaction");
 const Bookings = require("../models/booking");
+const pug = require("pug");
 // const { Protect } = require("../middleware/auth");
 const axios = require("axios");
 const { initiatePaymentService } = require("../utils/payment");
@@ -44,13 +45,14 @@ app.get("/getstatus", async (req, res) => {
     transaction.overwrite({ ...data, ...updateObj });
     transaction.save();
 
-    res.status(200).render("reciept", {
+    const html = pug.renderFile(`${__dirname}/../views/emails/reciept.pug`, {
       email: transaction.email,
       amount: transaction.amount,
       status: updateObj.status,
       date: updateObj.paidAt,
       transactionId: updateObj.transactionId,
     });
+    res.status(200).render(html);
   } catch (err) {
     return res.status(402).json({
       err: "unable to get payment information",
