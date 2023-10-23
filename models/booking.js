@@ -38,6 +38,9 @@ const BookingSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  reference: {
+    type: String,
+  },
   counter_id: {
     type: String,
     default: "",

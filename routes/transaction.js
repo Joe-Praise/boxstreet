@@ -1,5 +1,7 @@
 const express = require("express");
 const Transaction = require("../models/transaction");
+const Bookings = require("../models/booking");
+const pug = require("pug");
 // const { Protect } = require("../middleware/auth");
 const axios = require("axios");
 const { initiatePaymentService } = require("../utils/payment");
@@ -13,6 +15,9 @@ app.get("/getstatus", async (req, res) => {
     let { reference } = req.query;
 
     const transaction = await Transaction.findOne({
+      reference,
+    });
+    const booking = await Bookings.findOne({
       reference,
     });
 
@@ -40,8 +45,12 @@ app.get("/getstatus", async (req, res) => {
     transaction.overwrite({ ...data, ...updateObj });
     transaction.save();
 
-    res.status(200).json({
-      status: "success",
+    res.status(200).render("reciept", {
+      email: transaction.email,
+      amount: transaction.amount,
+      status: updateObj.status,
+      date: updateObj.paidAt,
+      transactionId: updateObj.transactionId,
     });
   } catch (err) {
     return res.status(402).json({
@@ -88,5 +97,16 @@ app.put("/:id", async (req, res) => {
     res.status(500).json({ err: err.message });
   }
 });
+
+// app.get("/show-page", (req, res) => {
+//   const html = pug.renderFile(`${__dirname}/../views/emails/reciept.pug`, {
+//     email: "test@gamil.com",
+//     amount: "transaction.amount",
+//     status: "success",
+//     date: "23/04/2023",
+//     transactionId: 3456789,
+//   });
+//   res.status(200).render("reciept");
+// });
 
 module.exports = app;

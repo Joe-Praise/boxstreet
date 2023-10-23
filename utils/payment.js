@@ -16,19 +16,21 @@ const initiatePaymentService = async (req, res) => {
       amount: Number(req.body.amount) * 100,
       email: req.body.email,
       user_id: req.body._id,
+      cinema_id: req.body.metadata.cinema_id,
+      branch_id: req.body.metadata.branch_id,
       reference: "BS-TF" + codeGenerator(10),
     };
 
-    // const response = await axios.post(process.env.PAYSTACK_URL, body, options);
-    // const paymentLink = response.data;
+    const response = await axios.post(process.env.PAYSTACK_URL, body, options);
+    const paymentLink = response.data;
 
-    // const transaction = new Transaction({ ...body, amount: body.amount / 100 });
-    // await transaction.save();
+    const transaction = new Transaction({ ...body, amount: body.amount / 100 });
+    await transaction.save();
 
     res.status(200).json({
       status: "Transaction initalized",
       data: {
-        // paymentLink,
+        paymentLink,
         body,
       },
     });
