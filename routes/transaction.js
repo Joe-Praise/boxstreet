@@ -17,9 +17,9 @@ app.get("/getstatus", async (req, res) => {
     const transaction = await Transaction.findOne({
       reference,
     });
-    const booking = await Bookings.findOne({
-      reference,
-    });
+    // const booking = await Bookings.findOne({
+    //   reference,
+    // });
 
     let url = process.env.PAYSTACK_GETSTATUS_URL + `${reference}`;
 
@@ -98,15 +98,21 @@ app.put("/:id", async (req, res) => {
   }
 });
 
-// app.get("/show-page", (req, res) => {
-//   const html = pug.renderFile(`${__dirname}/../views/emails/reciept.pug`, {
-//     email: "test@gamil.com",
-//     amount: "transaction.amount",
-//     status: "success",
-//     date: "23/04/2023",
-//     transactionId: 3456789,
-//   });
-//   res.status(200).render("reciept");
-// });
+app.get("/show-page", (req, res) => {
+  // const html = pug.renderFile(`${__dirname}/../views/emails/reciept.pug`, {
+  //   email: "test@gamil.com",
+  //   amount: "transaction.amount",
+  //   status: "success",
+  //   date: "23/04/2023",
+  //   transactionId: 3456789,
+  // });
+  res.status(200).render("reciept", {
+    email: "test@gamil.com",
+    amount: "transaction.amount",
+    status: "success",
+    date: "23/04/2023",
+    transactionId: 3456789,
+  });
+});
 
 module.exports = app;
