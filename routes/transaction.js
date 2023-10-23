@@ -44,9 +44,12 @@ app.get("/getstatus", async (req, res) => {
     transaction.overwrite({ ...data, ...updateObj });
     transaction.save();
 
-    res.status(200).json({
-      status: "success",
-      reference,
+    res.status(200).render("reciept", {
+      email: transaction.email,
+      amount: transaction.amount,
+      status: updateObj.status,
+      date: updateObj.paidAt,
+      transactionId: updateObj.transactionId,
     });
   } catch (err) {
     return res.status(402).json({
