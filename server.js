@@ -24,7 +24,6 @@ const auth = require("./routes/auth");
 const payment = require("./routes/transaction");
 const genre = require("./routes/genre");
 
-
 let PORT = process.env.PORT;
 let MONGO_URL = process.env.MONGO_URL;
 app.set("view engine", "pug");
@@ -48,6 +47,9 @@ app.use(cors());
 //   //   msg: "Api is running",
 //   // });
 //   res.status(200).render("activate");
+// });
+// app.use("/", (req, res) => {
+//   res.status(200).render("reciept");
 // });
 app.use("/api/v1/cinemas", cinema);
 app.use("/api/v1/users", user);

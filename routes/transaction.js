@@ -45,14 +45,13 @@ app.get("/getstatus", async (req, res) => {
     transaction.overwrite({ ...data, ...updateObj });
     transaction.save();
 
-    const html = pug.renderFile(`${__dirname}/../views/emails/reciept.pug`, {
+    res.status(200).render("reciept", {
       email: transaction.email,
       amount: transaction.amount,
       status: updateObj.status,
       date: updateObj.paidAt,
       transactionId: updateObj.transactionId,
     });
-    res.status(200).render(html);
   } catch (err) {
     return res.status(402).json({
       err: "unable to get payment information",
@@ -98,5 +97,16 @@ app.put("/:id", async (req, res) => {
     res.status(500).json({ err: err.message });
   }
 });
+
+// app.get("/show-page", (req, res) => {
+//   const html = pug.renderFile(`${__dirname}/../views/emails/reciept.pug`, {
+//     email: "test@gamil.com",
+//     amount: "transaction.amount",
+//     status: "success",
+//     date: "23/04/2023",
+//     transactionId: 3456789,
+//   });
+//   res.status(200).render("reciept");
+// });
 
 module.exports = app;
