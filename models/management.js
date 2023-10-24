@@ -16,7 +16,7 @@ const ManagementSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["COUNTER", "THEATER", "WEBSITE", "CINEMA"],
+    enum: ["COUNTER", "THEATER", "WEBSITE", "CINEMA", "ACCOUNT"],
     uppercase: true,
   },
   password: {
