@@ -54,19 +54,19 @@ app.post("/", async (req, res) => {
 // resend new verification
 app.post("/resend", async (req, res) => {
   try {
-    let { email, cinema_id, branch_id } = req.body;
+    let { email, cinema_id } = req.body;
 
-    let checkIfVerificationExists = await find({
+    let checkIfVerificationExists = await Verification.findOne({
       email,
       cinema_id,
       is_active: true,
     });
     if (checkIfVerificationExists) {
       checkIfVerificationExists.is_active = false;
-      checkIfVerificationExists.save();
+      await checkIfVerificationExists.save();
     }
 
-    const savedUser = await User.findOne({ email, cinema_id, branch_id });
+    const savedUser = await User.findOne({ email, cinema_id });
     if (!savedUser) {
       return res.status(404).send({ msg: "User does not exist", code: 404 });
     }
