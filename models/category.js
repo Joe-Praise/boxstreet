@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const CategorySchema = new mongoose.Schema({
   name: {
     type: String,
-    enum: ["VIP", "VVIP", "REGULAR"],
     required: true,
     uppercase:true,
   },

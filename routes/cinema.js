@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express.Router();
 const Cinema = require("../models/cinema");
+const Branch = require("../models/branch");
 const { upload, handleUpload } = require("../utils/upload");
 require("dotenv").config();
 
@@ -20,10 +21,11 @@ app.get("/archived", async (req, res) => {
 app.get("/", async (req, res) => {
   try {
     const cinemas = await Cinema.find({ is_deleted: false });
+    
     res.status(200).json(cinemas);
   } catch (error) {
     res.status(500).json({ error: error.message });
-  }
+  } 
 });
 
 // Get a cinema by ID
@@ -79,19 +81,23 @@ app.put("/:id/archived", async (req, res) => {
     const { id } = req.params;
     const cinema = await Cinema.findById(id);
 
-    if (!cinema)
+    if (!cinema) {
       return res
         .status(404)
         .json({ msg: "The id supplied does not exist", code: 404 });
+    }
 
-    cinema.is_deleted = req.body.status;
-    await cinema.save();
+    cinema.is_deleted = true; // Debug statement
+    await cinema.save(); // Debug statement
 
-    res.status(200).json({ msg: "Cinema archieved" });
+    res.status(200).json({ msg: "Cinema archived" });
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
 });
+
+
+
 
 // Upload image for cinema
 app.put("/:id/resources", upload.single("image"), async (req, res) => {
