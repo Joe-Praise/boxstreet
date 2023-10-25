@@ -3,17 +3,18 @@ html
     head
         meta(name='viewport', content='width=device-width')
         meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
-        title= subject
+        title Box Street
+        link(rel='stylesheet' href='/css/style.css')
 
-        //- include _reciept
     body 
         section
             h1 Transaction Details
-            //- .container
-            //-     p Email: #{email}
-            //-     p Amount: #{amount}
-            //-     p Status: #{status}
-            //-     - const convertDate = new Date(date).toDateString()
-            //-     p Paid At: #{convertDate}
-            //-     p TransactionId: #{transactionId}
-            //-     a(href="http://localhost:3000/history") Booking history
+            .container
+                p Email: #{email}
+                p Amount: #{amount}
+                p Status: #{status}
+                - const convertDate = new Date(date).toDateString()
+                p Paid At: #{convertDate}
+                p TransactionId: #{transactionId}
+                .link 
+                    a(href="http://localhost:3000/history") Booking history

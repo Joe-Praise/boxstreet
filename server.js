@@ -26,8 +26,13 @@ const genre = require("./routes/genre");
 
 let PORT = process.env.PORT;
 let MONGO_URL = process.env.MONGO_URL;
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
+app.use(express.static(path.join(__dirname, "public")));
 
 mongoose.connect(MONGO_URL, {
   useNewUrlParser: true,
@@ -37,19 +42,11 @@ mongoose.connect(MONGO_URL, {
 mongoose.connection.on("open", () => console.log("Mongo Server connected"));
 mongoose.connection.on("error", (err) => console.log(err.message));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-// app.use(express.static(path.join(__dirname, "public")));
-app.use(cors());
-
 // app.get("/", (req, res) => {
 //   // res.json({
 //   //   msg: "Api is running",
 //   // });
 //   res.status(200).render("activate");
-// });
-// app.use("/", (req, res) => {
-//   res.status(200).render("reciept");
 // });
 app.use("/api/v1/cinemas", cinema);
 app.use("/api/v1/users", user);

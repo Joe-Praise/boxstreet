@@ -4,6 +4,7 @@ const Cinema = require("../models/cinema");
 let Verification = require("../models/verification");
 let User = require("../models/user");
 let codeGenerator = require("../utils/codeGenerator");
+const Email = require("../utils/email");
 
 // Get all verifications
 app.get("/", async (req, res) => {
@@ -50,6 +51,37 @@ app.post("/", async (req, res) => {
   }
 });
 
+// resend new verification
+app.post("/resend", async (req, res) => {
+  try {
+    let { email, cinema_id } = req.body;
+
+    let checkIfVerificationExists = await Verification.findOne({
+      email,
+      cinema_id,
+      is_active: true,
+    });
+    if (checkIfVerificationExists) {
+      checkIfVerificationExists.is_active = false;
+      await checkIfVerificationExists.save();
+    }
+
+    const savedUser = await User.findOne({ email, cinema_id });
+    if (!savedUser) {
+      return res.status(404).send({ msg: "User does not exist", code: 404 });
+    }
+    req.body.code = codeGenerator();
+    let verification = new Verification(req.body);
+    await verification.save();
+
+    await new Email(savedUser, req.body.code).sendSignupVerification();
+
+    res.send(verification);
+  } catch (err) {
+    res.status(400).json({ err: err.message });
+  }
+});
+
 app.post("/verify", async (req, res) => {
   try {
     let { email, code } = req.body;
@@ -75,10 +107,10 @@ app.post("/verify", async (req, res) => {
       verify.save();
 
       user.is_verified = true;
-      user.save();
+      user.save({ validateBeforeSave: false });
 
       res.json({
-        msg: "Verfication successfull",
+        msg: "Verfication successful",
       });
     } else {
       res.status(404).json({
