@@ -41,6 +41,23 @@ app.get("/:id/theaters", async (req, res) => {
   }
 })
 
+//Get all cinemas in a particular branch
+app.get("/:id/cinemas", async (req, res) => {
+  try{
+    const branchId = req.params.id;
+    const branch = await Branch.findById(branchId);
+
+    if(!branch) {
+      res.status(404).json({ message: "Branch not found", code: 404 });
+    } else {
+      const cinemas = await Cinema.find({ branch_id: branchId }).populate("branch_id");
+      res.json(cinemas)
+    }
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+})
+
 // Create a new branch
 app.post("/", async (req, res) => {
   try {

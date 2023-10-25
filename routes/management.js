@@ -30,6 +30,19 @@ app.get("/", async (req, res) => {
   }
 });
 
+// Get  managers by role
+app.get("/role", async (req, res) => {
+  try {
+    const { role } = req.query;
+    const managers = await Management.find({ role }).populate("cinema_id");
+
+    res.status(200).json(managers);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 // get a single manager
 app.get("/:id/user-info", async (req, res) => {
   let mngt;

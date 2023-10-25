@@ -8,6 +8,7 @@ const ManagementSchema = new mongoose.Schema({
   },
   cinema_id: {
     type: String,
+    ref:"cinemas",
     required: true,
   },
   fullname: {
