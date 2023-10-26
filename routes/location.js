@@ -6,7 +6,7 @@ let app = express.Router()
 //get all locations
 app.get('/', async (req, res) => {
     try{
-        const loactions = await Location.find();
+        const loactions = await Location.find().populate("branch_id ");
         res.json(loactions)
     } catch (err) {
         res.status(500).json({ err: err.message})
