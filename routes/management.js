@@ -87,6 +87,13 @@ app.post("/register", async (req, res) => {
   }
 });
 
+
+// management logout
+app.post("/logOut", (req, res) => {
+  res.cookie("token", "").json("LogOut Successful");
+});
+
+
 // update a manager
 app.put("/:id", async (req, res) => {
   const { fullname, branch_id, role } = req.body;
