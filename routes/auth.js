@@ -139,7 +139,13 @@ app.post("/management-login", async (req, res) => {
     // 2) Check if user exist && password is correct
     const manager = await Management.findOne({ email })
       .select("+password")
-      .populate("cinema_id branch_id");
+      .populate("cinema_id")
+      .populate({
+        path: "branch_id",
+        populate: {
+          path: "location_id",
+        },
+      });
 
     if (
       !manager ||
