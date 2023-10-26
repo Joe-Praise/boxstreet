@@ -5,10 +5,30 @@ const pug = require("pug");
 // const { Protect } = require("../middleware/auth");
 const axios = require("axios");
 const { initiatePaymentService } = require("../utils/payment");
+const codeGenerator = require("../utils/codeGenerator");
 let app = express.Router();
 require("dotenv").config();
 
 app.post("/initiate-payment", initiatePaymentService);
+
+app.post("/counter", async (req, res) => {
+  const body = {
+    amount: Number(req.body.amount),
+    date: Date.now(),
+    email: req.body.email,
+    cinema_id: req.body.cinema_id,
+    branch_id: req.body.branch_id,
+    reference: "BS-TF" + codeGenerator(10),
+    channel: req.body.channel,
+  };
+
+  const transaction = new Transaction(body);
+  await transaction.save();
+
+  res.status(200).json({
+    status: "Transaction successful",
+  });
+});
 
 app.get("/getstatus", async (req, res) => {
   try {
@@ -60,6 +80,7 @@ app.get("/getstatus", async (req, res) => {
 });
 
 app.get("/", async (req, res) => {
+  // const {}
   try {
     const transactions = await Transaction.find().populate("user_id");
     res.status(200).json({
