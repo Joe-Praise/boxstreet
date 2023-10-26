@@ -35,7 +35,13 @@ app.get("/:id", async (req, res) => {
     const { id } = req.params;
     console.log(id);
     const user = await User.findById(id)
-      .populate("cinema_id branch_id")
+      .populate("cinema_id")
+      .populate({
+        path: "branch_id",
+        populate: {
+          path: "location_id",
+        },
+      })
       .select("-is_verified");
     if (!user) {
       res.status(404).json({ msg: "User not found", code: 404 });
