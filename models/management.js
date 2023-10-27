@@ -4,11 +4,13 @@ const bcrypt = require("bcryptjs");
 const ManagementSchema = new mongoose.Schema({
   branch_id: {
     type: String,
-    ref:"branches"
+    default: "653b94d73c3207e6949bc212",
+    ref: "branches",
   },
   cinema_id: {
     type: String,
-    ref:"cinemas",
+    ref: "cinemas",
+    default: "653b94d73c3207e6949bc212",
     required: true,
   },
   fullname: {
