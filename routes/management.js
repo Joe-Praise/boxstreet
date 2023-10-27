@@ -9,21 +9,22 @@ const { upload, handleUpload } = require("../utils/upload");
 
 app.get("/", async (req, res) => {
   try {
-    // let mngts = [];
-    // const { cinema_id } = req.body;
 
-    let cinema = await Cinema.findById(cinema_id);
+    const { branch_id, cinema_id } = req.query;
 
-    // if (branch)
-    //   mngts = await Management.find({ branch_id: branch }).populate(
-    //     "branch_id"
-    //   );
-    // else 
-    if (!cinema)
-    return res.status(404).send({ msg: "Cinema does not exist", code: 404 });
+    if (branch_id) management = await Management.find({ branch_id }).populate({
+      path: "branch_id",
+      populate: {
+        "path": "location_id"
+      }
+    });
+    if (cinema_id) management = await Management.find({ cinema_id }).populate({
+      path: "branch_id", 
+      populate: {
+        "path": "location_id"
+      }
+    });
 
-    let management = new Management(req.body);
-    await management.save();
     res.send(management);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -46,7 +47,7 @@ app.get("/role", async (req, res) => {
 // get a single manager
 app.get("/:id/user-info", async (req, res) => {
   let mngt;
-  
+
   try {
     mngt = await Management.findById(req.params.id).populate("branch_id").select("-password");
   } catch (error) {
@@ -72,9 +73,9 @@ app.post("/register", async (req, res) => {
       branch_id: req.body.branch_id,
     });
     const user = await newUser.save();
-    
+
     // Remove password from the output
-    let payload ={}
+    let payload = {}
     payload.email = newUser.email;
     payload.name = newUser.fullname;
     payload.code = req.body.password;

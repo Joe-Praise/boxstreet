@@ -37,6 +37,7 @@ const TransactionSchema = new mongoose.Schema({
   },
   channel: {
     type: String,
+    enum: ["card", "cash"],
   },
   transactionId: {
     type: Number,

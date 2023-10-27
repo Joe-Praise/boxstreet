@@ -19,7 +19,7 @@ app.post("/counter", async (req, res) => {
     cinema_id: req.body.cinema_id,
     branch_id: req.body.branch_id,
     reference: "BS-TF" + codeGenerator(10),
-    channel: req.body.channel,
+    channel: req.body.channel.toLowerCase(),
   };
 
   const transaction = new Transaction(body);
@@ -80,7 +80,6 @@ app.get("/getstatus", async (req, res) => {
 });
 
 app.get("/", async (req, res) => {
-  // const {}
   try {
     const transactions = await Transaction.find().populate("user_id");
     res.status(200).json({
@@ -88,6 +87,31 @@ app.get("/", async (req, res) => {
       data: {
         transactions,
       },
+    });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
+
+app.get("/summary", async (req, res) => {
+  try {
+    const summary = await Transaction.aggregate([
+      {
+        $group: {
+          _id: {
+            year: { $year: "$date" },
+            month: { $month: "$date" },
+            day: { $dayOfMonth: "$date" },
+          },
+          amount: { $sum: "$amount" },
+          avgAmount: { $avg: "$amount" },
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      status: "success",
+      summary,
     });
   } catch (err) {
     res.status(500).json({ err: err.message });
