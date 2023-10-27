@@ -13,6 +13,11 @@ const BranchSchema = new mongoose.Schema({
     required: true,
   },
 
+  name: {
+    type: String,
+    required: true
+  },
+
   opening: {
     type: String, 
     required: true,
