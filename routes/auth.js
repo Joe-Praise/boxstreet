@@ -48,10 +48,8 @@ const createSendToken = (user, statusCode, res) => {
 const forgotPassword = async (email, user, res) => {
   const data = { email, cinema_id: user.cinema_id };
 
-  console.log(data);
   const response = await axios.post(VERIFICATION_URL, data);
   const responseData = response.data;
-  console.log(responseData);
 
   // Remove password from the output
   user.password = undefined;
@@ -63,6 +61,7 @@ const forgotPassword = async (email, user, res) => {
     status: "success",
     code: responseData.code,
     message: "Code sent to email",
+    user,
   });
 };
 
@@ -138,7 +137,15 @@ app.post("/management-login", async (req, res) => {
     }
 
     // 2) Check if user exist && password is correct
-    const manager = await Management.findOne({ email }).select("+password");
+    const manager = await Management.findOne({ email })
+      .select("+password")
+      .populate("cinema_id")
+      .populate({
+        path: "branch_id",
+        populate: {
+          path: "location_id",
+        },
+      });
 
     if (
       !manager ||
@@ -157,8 +164,8 @@ app.post("/management-login", async (req, res) => {
 app.post("/forgot-password", async (req, res) => {
   try {
     // 1) Get user based on posted email
-    const { email } = req.body;
-    const user = await User.findOne({ email });
+    const { email, branch_id, cinema_id } = req.body;
+    const user = await User.findOne({ email, branch_id, cinema_id });
     if (!user) {
       return req.status(404).json({
         msg: "User does not exist!",
@@ -278,7 +285,7 @@ app.patch("/reset-password/management", async (req, res) => {
 });
 
 app.put("/update-password", async (req, res, next) => {
-  const { email, password, newPassword, cinema_id, branch_id } = req.body;
+  const { email, password, newPassword } = req.body;
 
   try {
     // 1) get the user from the collection
@@ -289,6 +296,7 @@ app.put("/update-password", async (req, res, next) => {
       return res.status(401).json({ message: "Invalid password" });
     }
 
+    console.log(user);
     // 3) If so, update password
     user.password = newPassword;
     await user.save();

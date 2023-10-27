@@ -1,4 +1,8 @@
 let Movie = require("../models/movie");
+const Branch = require("../models/branch");
+const Cinema = require("../models/cinema");
+const Location = require("../models/location");
+const Theater = require("../models/theater");
 let express = require("express");
 let app = express.Router();
 const { upload, handleUpload } = require("../utils/upload");
@@ -53,6 +57,31 @@ app.get("/", async (req, res) => {
       });
     }
     return res.status(200).json({
+      status: "success",
+      length: movies.length,
+      data: movies,
+    });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
+
+// get movie by cinema
+app.get("/byCinema/:cinemaId", async (req, res) => {
+  try {
+    const cinemaId = req.params.cinemaId;
+    const movies = await Movie.find({ cinema_id: cinemaId })
+      .select("-active")
+      .populate("branch_id cinema_id location_id genre_id");
+
+    if (!movies || movies.length === 0) {
+      return res.status(404).json({
+        status: "No movies found for this cinema!",
+        data: [],
+      });
+    }
+
+    res.status(200).json({
       status: "success",
       length: movies.length,
       data: movies,

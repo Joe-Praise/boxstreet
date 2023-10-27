@@ -23,6 +23,7 @@ const location = require("./routes/location");
 const auth = require("./routes/auth");
 const payment = require("./routes/transaction");
 const genre = require("./routes/genre");
+const admin = require("./routes/admin");
 
 let PORT = process.env.PORT;
 let MONGO_URL = process.env.MONGO_URL;
@@ -48,6 +49,7 @@ mongoose.connection.on("error", (err) => console.log(err.message));
 //   // });
 //   res.status(200).render("activate");
 // });
+
 app.use("/api/v1/cinemas", cinema);
 app.use("/api/v1/users", user);
 app.use("/api/v1/branches", branch);
@@ -66,6 +68,7 @@ app.use("/api/v1/managements", management);
 app.use("/api/v1/locations", location);
 app.use("/api/v1/payments", payment);
 app.use("/api/v1/genres", genre);
+app.use("/api/v1/admins", admin);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
