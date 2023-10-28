@@ -73,7 +73,7 @@ app.post("/signup", async (req, res) => {
       email: req.body.email,
       password: req.body.password,
       cinema_id: req.body.cinema_id,
-      branch_id: req.body.cinema_id,
+      branch_id: req.body.branch_id,
     };
 
     const data = {

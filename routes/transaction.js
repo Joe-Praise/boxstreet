@@ -14,12 +14,13 @@ app.post("/initiate-payment", initiatePaymentService);
 app.post("/counter", async (req, res) => {
   const body = {
     amount: Number(req.body.amount),
-    date: Date.now(),
+    paidAt: new Date().toISOString(),
     email: req.body.email,
     cinema_id: req.body.cinema_id,
     branch_id: req.body.branch_id,
     reference: "BS-TF" + codeGenerator(10),
     channel: req.body.channel.toLowerCase(),
+    status: "success",
   };
 
   const transaction = new Transaction(body);
@@ -97,14 +98,41 @@ app.get("/summary", async (req, res) => {
   try {
     const summary = await Transaction.aggregate([
       {
+        $lookup: {
+          from: "cinemas",
+          localField: "cinema_id",
+          foreignField: "_id",
+          as: "cinema",
+        },
+      },
+      { $unwind: "$cinema" },
+      {
+        $lookup: {
+          from: "branches",
+          localField: "branch_id",
+          foreignField: "_id",
+          as: "branch",
+        },
+      },
+      { $unwind: "$branch" },
+      {
         $group: {
           _id: {
-            year: { $year: "$date" },
-            month: { $month: "$date" },
-            day: { $dayOfMonth: "$date" },
+            year: { $year: "$paidAt" },
+            month: { $month: "$paidAt" },
+            day: { $dayOfMonth: "$paidAt" },
+            cinema_id: "$cinema",
+            branch_id: "$branch",
+            // $year: {
+            //   $dateFromString: {
+            //     dateString: "$date",
+            //     format: "%d/%m/%Y %H:%M:%S",
+            //   },
+            // },
           },
           amount: { $sum: "$amount" },
           avgAmount: { $avg: "$amount" },
+          // cinema_id: "$cinema_id",
         },
       },
     ]);
@@ -116,6 +144,17 @@ app.get("/summary", async (req, res) => {
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
+});
+
+app.get("/summary-details", async (req, res) => {
+  try {
+    const summary = await Transaction.aggregate;
+
+    res.status(200).json({
+      status: "success",
+      summary,
+    });
+  } catch (err) {}
 });
 
 app.put("/:id", async (req, res) => {
