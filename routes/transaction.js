@@ -95,10 +95,8 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/summary", async (req, res) => {
-  let {branch_id} = req.query;
   try {
     const summary = await Transaction.aggregate([
-      
       {
         $lookup: {
           from: "cinemas",
@@ -125,16 +123,9 @@ app.get("/summary", async (req, res) => {
             day: { $dayOfMonth: "$paidAt" },
             cinema_id: "$cinema",
             branch_id: "$branch",
-            $year: {
-              $dateFromString: {
-                dateString: "$date",
-                format: "%d/%m/%Y %H:%M:%S",
-              },
-            },
           },
           amount: { $sum: "$amount" },
           avgAmount: { $avg: "$amount" },
-          // cinema_id: "$cinema_id",
         },
       },
     ]);
