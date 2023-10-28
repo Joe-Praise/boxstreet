@@ -95,8 +95,14 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/summary", async (req, res) => {
+  let {branch_id} = req.query;
   try {
     const summary = await Transaction.aggregate([
+      {
+        $match:{
+          branch_id
+        }
+      },
       {
         $lookup: {
           from: "cinemas",
@@ -106,15 +112,15 @@ app.get("/summary", async (req, res) => {
         },
       },
       { $unwind: "$cinema" },
-      {
-        $lookup: {
-          from: "branches",
-          localField: "branch_id",
-          foreignField: "_id",
-          as: "branch",
-        },
-      },
-      { $unwind: "$branch" },
+      // {
+      //   $lookup: {
+      //     from: "branches",
+      //     localField: "branch_id",
+      //     foreignField: "_id",
+      //     as: "branch",
+      //   },
+      // },
+      // { $unwind: "$branch" },
       {
         $group: {
           _id: {
@@ -122,13 +128,13 @@ app.get("/summary", async (req, res) => {
             month: { $month: "$paidAt" },
             day: { $dayOfMonth: "$paidAt" },
             cinema_id: "$cinema",
-            branch_id: "$branch",
-            // $year: {
-            //   $dateFromString: {
-            //     dateString: "$date",
-            //     format: "%d/%m/%Y %H:%M:%S",
-            //   },
-            // },
+            // branch_id: "$branch",
+            $year: {
+              $dateFromString: {
+                dateString: "$date",
+                format: "%d/%m/%Y %H:%M:%S",
+              },
+            },
           },
           amount: { $sum: "$amount" },
           avgAmount: { $avg: "$amount" },
