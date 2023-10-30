@@ -337,7 +337,7 @@ app.put("/update-password-management", async (req, res, next) => {
    
     // 2) check if Posted current password is correct
     if (!(await user.correctPassword(password, user.password))) {
-      return res.status(401).json({ message: "Invalid password" });
+      return res.json({ message: "Invalid password" });
     }
 
     // 3) If so, update password
