@@ -290,7 +290,7 @@ app.put("/update-password", async (req, res, next) => {
   try {
     // 1) get the user from the collection
     const user = await User.findOne({ email }).select("+password");
-    console.log(user)
+    console.log(user);
     // 2) check if Posted current password is correct
     if (!(await user.correctPassword(password, user.password))) {
       return res.status(401).json({ message: "Invalid password" });
@@ -334,7 +334,7 @@ app.put("/update-password-management", async (req, res, next) => {
   try {
     // 1) get the user from the collection
     const user = await Management.findOne({ email }).select("+password");
-   
+
     // 2) check if Posted current password is correct
     if (!(await user.correctPassword(password, user.password))) {
       return res.json({ message: "Invalid password" });
