@@ -33,7 +33,7 @@ app.get("/", async (req, res) => {
     const seat = await Seat.countDocuments();
     const branch = await Branch.countDocuments();
     const movie_schedule = await MovieSchedule.countDocuments();
-    const location = await Location.countDocuments();
+    const location = await Location.countDocuments(); 
 
     res.status(200).json({
       cinemas,
