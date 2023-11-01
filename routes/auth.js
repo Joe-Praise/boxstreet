@@ -115,7 +115,9 @@ app.post("/login", async (req, res) => {
     }
 
     // 2) Check if user exist && password is correct
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email, is_verified: true }).select(
+      "+password"
+    );
 
     if (!user || !(await user.correctPassword(password, user.password))) {
       return res.status(401).json({ msg: "Incorrect email or password" });
