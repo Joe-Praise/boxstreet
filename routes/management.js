@@ -74,6 +74,9 @@ app.post("/register", async (req, res) => {
       email: req.body.email,
       branch_id: req.body.branch_id,
     });
+    if (newUser.role == "CINEMA") {
+      newUser.branch_id = "653ce391ef32f7bf05a118e5";
+    }
     const user = await newUser.save();
 
     // Remove password from the output
