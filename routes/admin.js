@@ -15,11 +15,16 @@ const Location = require("../models/location");
 // summary
 app.get("/", async (req, res) => {
   try {
+    const screen = await Theater.aggregate([
+      { $match: {} },
+      { $group: { _id: null, screen: { $sum: "$screen" } } },
+    ]);
+    const total_screen = screen[0];
     const cinemas = await Cinema.countDocuments({ is_deleted: false });
     const theaters = await Theater.countDocuments();
     const bookings = await Booking.countDocuments();
     const users = await User.countDocuments();
-    const screens = await Screen.countDocuments();
+    const screens = total_screen.screen;
     const cinema_admin = await Management.countDocuments({ role: "CINEMA" });
     const counter_admin = await Management.countDocuments({ role: "COUNTER" });
     const theater_admin = await Management.countDocuments({ role: "THEATER" });
@@ -28,7 +33,7 @@ app.get("/", async (req, res) => {
     const seat = await Seat.countDocuments();
     const branch = await Branch.countDocuments();
     const movie_schedule = await MovieSchedule.countDocuments();
-    const location = await Location.countDocuments()
+    const location = await Location.countDocuments(); 
 
     res.status(200).json({
       cinemas,

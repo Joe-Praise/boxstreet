@@ -292,13 +292,12 @@ app.put("/update-password", async (req, res, next) => {
   try {
     // 1) get the user from the collection
     const user = await User.findOne({ email }).select("+password");
-
+    console.log(user);
     // 2) check if Posted current password is correct
     if (!(await user.correctPassword(password, user.password))) {
       return res.status(401).json({ message: "Invalid password" });
     }
 
-    console.log(user);
     // 3) If so, update password
     user.password = newPassword;
     await user.save();
@@ -331,4 +330,47 @@ app.put("/update-password", async (req, res, next) => {
   // }
 });
 
+app.put("/update-password-management", async (req, res, next) => {
+  const { email, password, newPassword } = req.body;
+
+  try {
+    // 1) get the user from the collection
+    const user = await Management.findOne({ email }).select("+password");
+
+    // 2) check if Posted current password is correct
+    if (!(await user.correctPassword(password, user.password))) {
+      return res.json({ message: "Invalid password" });
+    }
+
+    // 3) If so, update password
+    user.password = newPassword;
+    await user.save();
+    createSendToken(user, 200, res);
+  } catch (err) {
+    res.status(400).json({ err: err.message });
+  }
+  // try {
+  //   const user = await User.findOne({ email });
+
+  //   if (!user) {
+  //     return res.status(404).json({ message: "User not found" });
+  //   }
+
+  //   const isPasswordValid = await bcrypt.compare(password, user.password);
+
+  //   if (!isPasswordValid) {
+  //     return res.status(401).json({ message: "Invalid password" });
+  //   }
+
+  //   const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+  //   console.log("Hashed New Password:", hashedNewPassword);
+  //   user.password = hashedNewPassword;
+  //   await user.save();
+
+  //   return res.status(200).json({ message: "Password updated successfully" });
+  // } catch (err) {
+  //   console.error(err);
+  //   return res.status(500).json({ message: "Internal server error" });
+  // }
+});
 module.exports = app;

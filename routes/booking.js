@@ -91,7 +91,7 @@ app.get("/:id/ticket-no", async (req, res) => {
   let booking;
   let ticket_no = req.params.id.toLowerCase();
   try {
-    booking = await Booking.findOne({ ticket_no });
+    booking = await Booking.findOne({ ticket_no }).populate("movie_id");
   } catch (err) {
     res.json(err.message);
   }
