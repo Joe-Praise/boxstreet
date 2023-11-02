@@ -9,13 +9,13 @@ const MovieSchema = new mongoose.Schema({
   image: { type: String },
   trailer: { type: String, required: true },
   description: { type: String, required: true },
-  times_showed: { type: Number,},
+  times_showed: { type: Number },
   cast: { type: Array, default: [] },
   movie_director: { type: String, required: true },
   production_studio: { type: String, required: true },
   duration: { type: String, required: true },
-  language: { type: String,  },
-  movie_rating: { type: String, },
+  language: { type: String },
+  movie_rating: { type: String },
   pg_rating: { type: String, required: true },
   release_date: { type: String, required: true },
   coming_soon: { type: Boolean },
@@ -23,6 +23,11 @@ const MovieSchema = new mongoose.Schema({
   active: { type: Boolean },
 });
 
+MovieSchema.virtual("genres", {
+  ref: "genres",
+  foreignField: "_id",
+  localField: "genre_id",
+});
 const Movie = mongoose.model("movies", MovieSchema);
 module.exports = Movie;
 /*{
