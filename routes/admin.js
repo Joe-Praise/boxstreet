@@ -19,7 +19,7 @@ app.get("/", async (req, res) => {
       { $match: {} },
       { $group: { _id: null, screen: { $sum: "$screen" } } },
     ]);
-    const total_screen = screen[0];
+    const total_screen = screen[0] || 0;
     const cinemas = await Cinema.countDocuments({ is_deleted: false });
     const theaters = await Theater.countDocuments();
     const bookings = await Booking.countDocuments();
@@ -33,7 +33,7 @@ app.get("/", async (req, res) => {
     const seat = await Seat.countDocuments();
     const branch = await Branch.countDocuments();
     const movie_schedule = await MovieSchedule.countDocuments();
-    const location = await Location.countDocuments(); 
+    const location = await Location.countDocuments();
 
     res.status(200).json({
       cinemas,
