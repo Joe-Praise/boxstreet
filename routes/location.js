@@ -57,7 +57,7 @@ app.post("/", async (req, res) => {
 
     res.status(201).json(savedLocation);
   } catch (err) {
-    res.status(500).json({ err: err.message });
+    res.status(500).json({ err: err.message }); 
   }
 });
 
@@ -82,7 +82,7 @@ app.put("/:id", async (req, res) => {
 
 //delete a location
 app.delete("/:id", async (req, res) => {
-  try {
+  try {   
     const { id } = req.params;
     const location = await Location.findById(id);
 
