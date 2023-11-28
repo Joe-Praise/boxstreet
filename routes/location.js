@@ -79,7 +79,7 @@ app.put("/:id", async (req, res) => {
     res.status(500).json({ err: err.message });
   }
 });
- 
+  
 //delete a location
 app.delete("/:id", async (req, res) => {
   try {   
